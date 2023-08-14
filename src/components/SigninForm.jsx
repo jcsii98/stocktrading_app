@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 
 export default function SigninForm(props) {
-  const { setUserPending, setShowSignin, setIsLoggedIn, setUserData } = props;
+  const {
+    setSuccessfulSignup,
+    setUserPending,
+    setShowSignin,
+    setIsLoggedIn,
+    setUserData,
+  } = props;
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -59,6 +65,7 @@ export default function SigninForm(props) {
 
   const handleHideSignin = () => {
     setShowSignin(false);
+    setSuccessfulSignup(false);
   };
 
   return (

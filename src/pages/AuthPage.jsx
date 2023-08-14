@@ -3,29 +3,45 @@ import SignupForm from "../components/SignupForm";
 import React, { useState } from "react";
 
 export default function AuthPage(props) {
-  const { setUserPending, isLoggedIn, setIsLoggedIn, setUserData } = props;
-  const [showSignin, setShowSignin] = useState(false);
+  const {
+    showSignin,
+    setShowSignin,
+    successfulSignup,
+    setUserPending,
+    isLoggedIn,
+    setIsLoggedIn,
+    setUserData,
+    setSuccessfulSignup,
+  } = props;
   return (
     <>
       {" "}
-      {showSignin ? (
-        <>
-          <SigninForm
-            key="signin"
-            setUserPending={setUserPending}
-            setUserData={setUserData}
-            setIsLoggedIn={setIsLoggedIn}
-            showSignin={showSignin}
-            setShowSignin={setShowSignin}
-          />
-        </>
+      {successfulSignup ? (
+        <></>
       ) : (
         <>
-          <SignupForm
-            key="signup"
-            showSignin={showSignin}
-            setShowSignin={setShowSignin}
-          />
+          {showSignin ? (
+            <>
+              <SigninForm
+                key="signin"
+                setSuccessfulSignup={setSuccessfulSignup}
+                setUserPending={setUserPending}
+                setUserData={setUserData}
+                setIsLoggedIn={setIsLoggedIn}
+                showSignin={showSignin}
+                setShowSignin={setShowSignin}
+              />
+            </>
+          ) : (
+            <>
+              <SignupForm
+                key="signup"
+                setSuccessfulSignup={setSuccessfulSignup}
+                showSignin={showSignin}
+                setShowSignin={setShowSignin}
+              />
+            </>
+          )}
         </>
       )}
     </>

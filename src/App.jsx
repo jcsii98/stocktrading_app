@@ -1,4 +1,5 @@
 import "./App.css";
+
 import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import AuthPage from "./pages/AuthPage";
@@ -9,6 +10,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [userPending, setUserPending] = useState(null);
+  const [successfulSignup, setSuccessfulSignup] = useState(false);
+  const [showSignin, setShowSignin] = useState(false);
 
   const rememberMe = async () => {
     const uid = localStorage.getItem("uid");
@@ -70,24 +73,42 @@ function App() {
           ) : (
             <>
               <div className="flex max-w-[1240px] mx-auto mt-4">
-                <div className="m-4">
-                  <article className="prose lg:prose-xl">
-                    <h1>New to Crypto Trading?</h1>
-                    <p>
-                      Dive into the world of P2P crypto trading and start
-                      exchanging digital assets directly. Our platform ensures
-                      secure and hassle-free transactions, putting you in
-                      control of your trades.
-                    </p>
-                    <p>
-                      Stay up-to-date with the latest trends and insights in the
-                      crypto market, so you can make informed decisions and take
-                      advantage of opportunities.
-                    </p>
-                  </article>
+                <div className="m-4 mx-auto">
+                  {successfulSignup ? (
+                    <>
+                      <article className="prose lg:prose-xl">
+                        <h1>Thank you for signing up!</h1>
+                        <p>
+                          We have sent you an email for the account confirmation
+                          instructions.
+                        </p>
+                      </article>
+                    </>
+                  ) : (
+                    <>
+                      <article className="prose lg:prose-xl">
+                        <h1>New to Crypto Trading?</h1>
+                        <p>
+                          Dive into the world of P2P crypto trading and start
+                          exchanging digital assets directly. Our platform
+                          ensures secure and hassle-free transactions, putting
+                          you in control of your trades.
+                        </p>
+                        <p>
+                          Stay up-to-date with the latest trends and insights in
+                          the crypto market, so you can make informed decisions
+                          and take advantage of opportunities.
+                        </p>
+                      </article>
+                    </>
+                  )}
                 </div>
 
                 <AuthPage
+                  setShowSignin={setShowSignin}
+                  showSignin={showSignin}
+                  successfulSignup={successfulSignup}
+                  setSuccessfulSignup={setSuccessfulSignup}
                   setUserPending={setUserPending}
                   setUserData={setUserData}
                   setIsLoggedIn={setIsLoggedIn}

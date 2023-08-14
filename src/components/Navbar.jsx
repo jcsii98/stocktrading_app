@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 export default function Navbar(props) {
   const { setIsLoggedIn, isLoggedIn, userData } = props;
@@ -12,6 +14,11 @@ export default function Navbar(props) {
     localStorage.clear();
     setIsLoggedIn(false);
   };
+
+  const redirectToHome = () => {
+    window.location.href = "/"; // Redirect to the homepage
+  };
+
   return (
     <>
       <div className="bg-[#003049] border-b">
@@ -22,6 +29,7 @@ export default function Navbar(props) {
           <ul className="hidden md:flex space-x-8">
             <li className="">
               <a
+                onClick={redirectToHome}
                 className="hover:text-[#316c8c] cursor-pointer	"
                 style={{ whiteSpace: "nowrap" }}
               >

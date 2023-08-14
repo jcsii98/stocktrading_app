@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function SignupForm(props) {
-  const { showSignin, setShowSignin } = props;
+  const { showSignin, setShowSignin, setSuccessfulSignup } = props;
 
   const [formData, setFormData] = useState({
     user_name: "",
@@ -47,6 +47,7 @@ export default function SignupForm(props) {
       if (response.ok) {
         // Handle successful response
         console.log("Sign up successful");
+        setSuccessfulSignup(true);
       } else {
         // Handle error response
         setError(responseData.errors);
@@ -60,6 +61,7 @@ export default function SignupForm(props) {
 
   const handleShowSignin = () => {
     setShowSignin(true);
+    setSuccessfulSignup(false);
   };
 
   return (
