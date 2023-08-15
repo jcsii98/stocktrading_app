@@ -13,6 +13,7 @@ export default function SigninForm(props) {
     password: "",
   });
   const [error, setError] = useState();
+  const [message, setMessage] = useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +25,7 @@ export default function SigninForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("Logging in");
     setError();
     const requestData = {
       email: formData.email,
@@ -50,15 +52,17 @@ export default function SigninForm(props) {
         );
         setUserData(responseData.data);
         setUserPending(responseData.data.account_pending);
-
+        setMessage();
         setIsLoggedIn(true);
         console.log("Sign in successful");
       } else {
+        setMessage();
         setError(responseData.errors);
 
         console.error("Sign in failed", responseData);
       }
     } catch (error) {
+      setMessage();
       console.error("An error occured:", error);
     }
   };
@@ -73,7 +77,7 @@ export default function SigninForm(props) {
       <div className="mx-auto w-[400px] mt-4 p-6 bg-white rounded shadow-md">
         <h2 className="text-xl font-semibold mb-4">Sign In</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
@@ -84,7 +88,7 @@ export default function SigninForm(props) {
               required
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-gray-700">Password</label>
             <input
               type="password"
@@ -95,6 +99,7 @@ export default function SigninForm(props) {
               required
             />
           </div>
+          {message && <div className="text-slate-500">{message}</div>}
           {error && (
             <div className="text-red-500">
               <ul>
@@ -106,7 +111,7 @@ export default function SigninForm(props) {
           )}
           <button
             type="submit"
-            className="bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"
+            className="mb-2 bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"
           >
             Sign in
           </button>

@@ -11,6 +11,7 @@ export default function SignupForm(props) {
     confirm_password: "",
   });
   const [error, setError] = useState();
+  const [message, setMessage] = useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +23,7 @@ export default function SignupForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("Signing up");
     setError();
 
     // Prepare the request data
@@ -48,13 +50,16 @@ export default function SignupForm(props) {
         // Handle successful response
         console.log("Sign up successful");
         setSuccessfulSignup(true);
+        setMessage();
       } else {
         // Handle error response
+        setMessage();
         setError(responseData.errors);
         console.error("Sign up failed", responseData);
       }
     } catch (error) {
       // Handle fetch error
+      setMessage();
       console.error("An error occurred:", error);
     }
   };
@@ -68,7 +73,7 @@ export default function SignupForm(props) {
     <div className="mx-auto w-[400px] mt-4 p-6 bg-white rounded shadow-md">
       <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-gray-700">Username</label>
           <input
             type="text"
@@ -79,7 +84,7 @@ export default function SignupForm(props) {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-gray-700">Full Name</label>
           <input
             type="text"
@@ -90,7 +95,7 @@ export default function SignupForm(props) {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-gray-700">Email</label>
           <input
             type="email"
@@ -101,7 +106,7 @@ export default function SignupForm(props) {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-gray-700">Password</label>
           <input
             type="password"
@@ -112,7 +117,7 @@ export default function SignupForm(props) {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-gray-700">Confirm Password</label>
           <input
             type="password"
@@ -123,6 +128,7 @@ export default function SignupForm(props) {
             required
           />
         </div>
+        {message && <div className="text-slate-500">{message}</div>}
         {error && (
           <div className="text-red-500">
             <ul>
@@ -135,7 +141,7 @@ export default function SignupForm(props) {
 
         <button
           type="submit"
-          className="bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"
+          className="mb-2 bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"
         >
           Sign Up
         </button>
