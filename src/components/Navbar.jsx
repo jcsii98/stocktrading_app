@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 export default function Navbar(props) {
-  const { setIsLoggedIn, isLoggedIn, userData } = props;
+  const { setCurrentPage, userRole, setIsLoggedIn, isLoggedIn, userData } =
+    props;
   const [nav, setNav] = useState(false);
 
   const handleNav = () => {
@@ -15,35 +16,72 @@ export default function Navbar(props) {
     setIsLoggedIn(false);
   };
 
-  const redirectToHome = () => {
-    window.location.href = "/"; // Redirect to the homepage
-  };
-
   return (
     <>
-      <div className="bg-[#003049] border-b">
-        <div className="max-w-[1240px] bg-[#003049] flex justify-between items-center h-24 mx-auto px-4  text-white">
+      <div className="border-b mb-10">
+        <div className="max-w-[1240px] flex justify-between items-center h-24 mx-auto text-white">
           <h1 className={"w-full text-3xl font-bold"}>
             {isLoggedIn ? <>Hi, {userData.full_name}</> : <>P2P Crypto</>}
           </h1>
           <ul className="hidden md:flex space-x-8">
-            <li className="">
-              <a
-                onClick={redirectToHome}
-                className="hover:text-[#316c8c] cursor-pointer	"
-                style={{ whiteSpace: "nowrap" }}
-              >
-                Home
-              </a>
-            </li>
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <>
                 <li className="">
                   <a
                     className="hover:text-[#316c8c] cursor-pointer	"
                     style={{ whiteSpace: "nowrap" }}
+                    onClick={() => setCurrentPage("Home")}
                   >
-                    Portfolios
+                    Home
+                  </a>
+                </li>
+                <li className="">
+                  <a
+                    className="hover:text-[#316c8c] cursor-pointer	"
+                    style={{ whiteSpace: "nowrap" }}
+                    onClick={() => setCurrentPage("My Account")}
+                  >
+                    My Account
+                  </a>
+                </li>
+                {userRole === "admin" ? (
+                  <>
+                    <li className="">
+                      <a
+                        className="hover:text-[#316c8c] cursor-pointer	"
+                        style={{ whiteSpace: "nowrap" }}
+                        onClick={() => setCurrentPage("Users")}
+                      >
+                        Users
+                      </a>
+                    </li>
+                    <li className="">
+                      <a
+                        className="hover:text-[#316c8c] cursor-pointer	"
+                        style={{ whiteSpace: "nowrap" }}
+                      >
+                        Portfolios
+                      </a>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className="">
+                      <a
+                        className="hover:text-[#316c8c] cursor-pointer	"
+                        style={{ whiteSpace: "nowrap" }}
+                      >
+                        My Portfolios
+                      </a>
+                    </li>
+                  </>
+                )}{" "}
+                <li className="">
+                  <a
+                    className="hover:text-[#316c8c] cursor-pointer	"
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    Stocks
                   </a>
                 </li>
                 <li onClick={handleSignout} className="">
@@ -52,17 +90,6 @@ export default function Navbar(props) {
                     style={{ whiteSpace: "nowrap" }}
                   >
                     Sign Out
-                  </a>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="">
-                  <a
-                    className="hover:text-[#316c8c] cursor-pointer	"
-                    style={{ whiteSpace: "nowrap" }}
-                  >
-                    Coins
                   </a>
                 </li>
               </>
@@ -82,11 +109,17 @@ export default function Navbar(props) {
               Sample P2P CryptoMarket
             </h1>
             <ul className="uppercase">
-              <li className="p-4 border-b border-gray-400">Home</li>
-              <li className="p-4 border-b border-gray-400">Company</li>
-              <li className="p-4 border-b border-gray-400">Resources</li>
-              <li className="p-4 border-b border-gray-400">About</li>
-              <li className="p-4 border-b border-gray-400">Contact</li>
+              <li className="p-4 border-b border-gray-400">My Account</li>
+              {userRole === "admin" ? (
+                <>
+                  <li className="p-4 border-b border-gray-400">Users</li>
+                  <li className="p-4 border-b border-gray-400">Portfolios</li>
+                </>
+              ) : (
+                <li className="p-4 border-b border-gray-400">My Portfolios</li>
+              )}
+              <li className="p-4 border-b border-gray-400">Stocks</li>
+              <li className="p-4 border-b border-gray-400">Sign out</li>
             </ul>
           </div>
         </div>

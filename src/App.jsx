@@ -1,10 +1,10 @@
 import "./App.css";
-
 import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import AuthPage from "./pages/AuthPage";
 import LoadingPage from "./pages/LoadingPage";
 import Dashboard from "./pages/Dashboard";
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
