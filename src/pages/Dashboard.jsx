@@ -1,6 +1,7 @@
 import Home from "../components/nav-components/Home";
 import MyAccount from "../components/nav-components/MyAccount";
 import Users from "../components/nav-components/Users";
+import Portfolios from "../components/nav-components/Portfolios";
 export default function Dashboard(props) {
   const { userData, userPending, currentPage, userRole } = props;
 

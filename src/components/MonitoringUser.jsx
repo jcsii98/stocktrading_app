@@ -61,7 +61,7 @@ export default function MonitoringUser(props) {
         <div className="justify-self-end">
           <img
             onClick={handleMinimizeClicked}
-            className="cursor-pointer w-4 h-4 rounded-full"
+            className="cursor-pointer w-4 h-4"
             src={Minimize}
             alt="Profile"
           />
