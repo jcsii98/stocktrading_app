@@ -1,3 +1,5 @@
+import UserPng from "../../assets/user.png";
+
 export default function MyAccount(props) {
   const { userData, userRole } = props;
   return (
@@ -8,7 +10,14 @@ export default function MyAccount(props) {
         </h2>
         <div className="bg-white p-6 rounded shadow">
           <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-gray-300 rounded-full flex-shrink-0"></div>
+            <div className="w-20 h-20 bg-gray-300 rounded-full flex-shrink-0">
+              {" "}
+              <img
+                className="place-self-center w-20 h-20 rounded-full mr-4"
+                src={UserPng}
+                alt="Profile"
+              />
+            </div>
             <div>
               <h3 className="text-lg font-semibold">{userData.full_name}</h3>
               <p className="text-gray-600">{userData.email}</p>

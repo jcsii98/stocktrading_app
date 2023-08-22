@@ -6,7 +6,7 @@ import LoadingPage from "../pages/LoadingPage";
 
 export default function AdminRoot() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [currentPage, setCurrentPage] = useState("Home");
   const rememberMe = async () => {

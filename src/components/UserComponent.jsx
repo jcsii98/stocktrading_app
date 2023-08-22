@@ -14,9 +14,9 @@ export default function UserComponent(props) {
           alt="Profile"
         />
         <div className="flex flex-col justify-start text-left">
-          <div className="text-black text-md">{user.full_name}</div>
-          <div className="text-slate-600 text-sm">{user.email}</div>
-          <div className="text-slate-600 text-sm">{user.user_name}</div>
+          <div className="text-black text-md">{user.user_name}</div>
+          <div className="text-slate-600 text-sm">User ID: {user.id}</div>
+          <div className="text-slate-600 text-sm">Email: {user.email}</div>
           <div className="text-slate-600 text-sm">
             Account Status: {user.account_pending ? "Pending" : "Approved"}
           </div>

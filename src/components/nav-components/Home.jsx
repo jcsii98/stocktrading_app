@@ -29,7 +29,7 @@ export default function Home(props) {
               </h2>
               <h2 className="pb-4 text-xl text-slate-400">Happy adminning!</h2>
             </div>
-            <div className="rounded p-6 overflow-y-scroll max-h-[500px]">
+            <div className="rounded p-6 overflow-y-scroll max-h-[550px]">
               <div>
                 <h1 className="pb-4 text-xl font-bold">Changelogs</h1>
                 <div className="mb-2 text-md text-slate-400">
