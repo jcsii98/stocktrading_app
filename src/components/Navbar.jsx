@@ -55,15 +55,6 @@ export default function Navbar(props) {
                         Users
                       </a>
                     </li>
-                    <li className="">
-                      <a
-                        className="hover:text-[#316c8c] cursor-pointer	"
-                        style={{ whiteSpace: "nowrap" }}
-                        onClick={() => setCurrentPage("Portfolios")}
-                      >
-                        Portfolios
-                      </a>
-                    </li>
                   </>
                 ) : (
                   <>
@@ -71,6 +62,7 @@ export default function Navbar(props) {
                       <a
                         className="hover:text-[#316c8c] cursor-pointer	"
                         style={{ whiteSpace: "nowrap" }}
+                        onClick={() => setCurrentPage("My Portfolios")}
                       >
                         My Portfolios
                       </a>
@@ -81,8 +73,9 @@ export default function Navbar(props) {
                   <a
                     className="hover:text-[#316c8c] cursor-pointer	"
                     style={{ whiteSpace: "nowrap" }}
+                    onClick={() => setCurrentPage("Portfolios")}
                   >
-                    Stocks
+                    Portfolios
                   </a>
                 </li>
                 <li onClick={handleSignout} className="">
@@ -119,7 +112,6 @@ export default function Navbar(props) {
               ) : (
                 <li className="p-4 border-b border-gray-400">My Portfolios</li>
               )}
-              <li className="p-4 border-b border-gray-400">Stocks</li>
               <li className="p-4 border-b border-gray-400">Sign out</li>
             </ul>
           </div>

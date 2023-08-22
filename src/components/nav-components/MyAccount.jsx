@@ -32,11 +32,17 @@ export default function MyAccount(props) {
               </div>
 
               {userRole === "user" && (
-                <div>
-                  <p className="text-gray-600">Balance:</p>
-                  <p>{userData.wallet_balance}</p>
-                  <p>{userData.pending_amount}</p>
-                </div>
+                <>
+                  <div>
+                    <p className="text-gray-600">user_id:</p>
+                    <p>{userData.id}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Balance:</p>
+                    <p>Wallet Balance: {userData.wallet_balance}</p>
+                    <p>Wallet Pending Amount: {userData.pending_amount}</p>
+                  </div>
+                </>
               )}
             </div>
           </div>

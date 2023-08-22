@@ -1,13 +1,8 @@
 import React, { useState } from "react";
 
 export default function SigninForm(props) {
-  const {
-    setSuccessfulSignup,
-    setUserPending,
-    setShowSignin,
-    setIsLoggedIn,
-    setUserData,
-  } = props;
+  const { setSuccessfulSignup, setShowSignin, setIsLoggedIn, setUserData } =
+    props;
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -51,7 +46,6 @@ export default function SigninForm(props) {
           response.headers.get("access-token")
         );
         setUserData(responseData.data);
-        setUserPending(responseData.data.account_pending);
         setMessage();
         setIsLoggedIn(true);
         console.log("Sign in successful");

@@ -3,7 +3,7 @@ import SignupForm from "../components/SignupForm";
 import React, { useState } from "react";
 
 export default function AuthPage(props) {
-  const { showSignin, setShowSignin } = props;
+  const { setUserData, showSignin, setShowSignin, setIsLoggedIn } = props;
   return (
     <>
       <div className="flex max-w-[1240px] mx-auto mt-4">
@@ -22,7 +22,11 @@ export default function AuthPage(props) {
           </p>
         </article>
         {showSignin ? (
-          <SigninForm setShowSignin={setShowSignin} />
+          <SigninForm
+            setUserData={setUserData}
+            setIsLoggedIn={setIsLoggedIn}
+            setShowSignin={setShowSignin}
+          />
         ) : (
           <SignupForm setShowSignin={setShowSignin} />
         )}

@@ -6,7 +6,7 @@ import LoadingPage from "../pages/LoadingPage";
 
 export default function AdminRoot() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [currentPage, setCurrentPage] = useState("Home");
   const rememberMe = async () => {
@@ -38,11 +38,18 @@ export default function AdminRoot() {
         setIsLoading(false);
         console.error("An error occured:", error);
       }
+    } else {
+      setIsLoggedIn(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    rememberMe();
+    const timer = setTimeout(() => {
+      rememberMe();
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (

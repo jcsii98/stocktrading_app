@@ -1,5 +1,5 @@
 export default function Home(props) {
-  const { userRole } = props;
+  const { userRole, userData } = props;
   return (
     <>
       {userRole === "admin" ? (
@@ -100,10 +100,12 @@ export default function Home(props) {
             <h1 className="pt-4 text-3xl font-bold text-white">
               Welcome to your personal Crypto trading platform.
             </h1>
-            <h2 className="pb-4 text-xl text-slate-400">
-              Your account is currently pending approval. You will receive an
-              email once it is approved.
-            </h2>
+            {userData.account_pending && (
+              <h2 className="pb-4 text-xl text-slate-400">
+                Your account is currently pending approval. You will receive an
+                email once it is approved.
+              </h2>
+            )}
           </div>
         </>
       )}

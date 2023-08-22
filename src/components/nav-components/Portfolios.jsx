@@ -2,7 +2,8 @@ import Down from "../../assets/down.png";
 import Minimize from "../../assets/minimize.png";
 import React, { useState, useEffect } from "react";
 import PortfolioComponent from "../PortfolioComponent";
-export default function Portfolios() {
+export default function Portfolios(props) {
+  const { userRole, userData } = props;
   const [dropdown, setDropdown] = useState(false);
   const [sortClicked, setSortClicked] = useState(false);
   const [sortBy, setSortBy] = useState(null);
@@ -200,7 +201,7 @@ export default function Portfolios() {
       </div>
       {searchClicked && (
         <div className="bg-white p-6 rounded shadow">
-          <div className="border-b flex justify-between">
+          <div className="border-b-[1.5px] flex justify-between">
             <h1 className="pb-4 text-2xl font-bold">
               {portfolioDetails ? (
                 <>Portfolio ID: {portfolioDetails.id}</>
@@ -250,33 +251,52 @@ export default function Portfolios() {
                   {portfolioDetails.total_amount}
                 </div>{" "}
                 <div className="">
-                  {/* fetch transactions for  */}
-                  <button
-                    onClick={handleFetchTransactions}
-                    type="button"
-                    className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                  >
-                    Fetch Transactions
-                  </button>
+                  {/* fetch transactions for admin*/}
+
+                  {userRole == "admin" && (
+                    <button
+                      onClick={handleFetchTransactions}
+                      type="button"
+                      className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    >
+                      Fetch Transactions
+                    </button>
+                  )}
+                  {userRole == "user" &&
+                  userData.id == portfolioDetails.user_id ? (
+                    <>Owned by user</>
+                  ) : (
+                    <>Not owned by user</>
+                  )}
                 </div>
               </div>
               {transactionsFetched && (
                 <>
-                  <div className="grid grid-cols-2">
-                    <div>
-                      <h1 className="py-4 text-xl text-slate-500">
+                  <div className="py-4 border-b-[1.5px] grid grid-cols-2">
+                    <div className="">
+                      <h1 className="pr-4 border-b border-r py-4 text-xl text-slate-500">
                         Seller Transactions
                       </h1>
                     </div>
                     <div>
-                      <h1 className="py-4 text-xl text-slate-500">
+                      <h1 className="border-b pl-4 py-4 text-xl text-slate-500">
                         Buyer Transactions
                       </h1>
                     </div>
-                    <div className="">
-                      <ul className="max-h-[60px] overflow-y-auto">
+                    <div className="pr-4 border-r">
+                      <ul className="max-h-[170px] overflow-y-auto">
+                        {sellerTransactions.length > 0 ? (
+                          <></>
+                        ) : (
+                          <div className="py-2 text-slate-600">
+                            No seller transactions listed for this portfolio.
+                          </div>
+                        )}
                         {sellerTransactions.map((transaction) => (
-                          <li className="flex" key={transaction.id}>
+                          <li
+                            className="py-2 border-b flex"
+                            key={transaction.id}
+                          >
                             <div className="pr-4">ID: {transaction.id}</div>
                             <div className="pr-4">
                               Quantity: {transaction.quantity}
@@ -291,11 +311,23 @@ export default function Portfolios() {
                         ))}
                       </ul>
                     </div>
-                    <div className="">
-                      <ul className="max-h-[60px] overflow-y-auto">
+                    <div className="pl-4">
+                      <ul className="max-h-[170px] overflow-y-auto">
+                        {buyerTransactions.length > 0 ? (
+                          <></>
+                        ) : (
+                          <div className="py-2 text-slate-600">
+                            No buyer transactions listed for this portfolio.
+                          </div>
+                        )}
                         {buyerTransactions.map((transaction) => (
-                          <li className="flex" key={transaction.id}>
-                            <div className="pr-4">ID: {transaction.id}</div>
+                          <li
+                            className="py-2 border-b flex"
+                            key={transaction.id}
+                          >
+                            <div className="pr-4">
+                              Transaction ID: {transaction.id}
+                            </div>
                             <div className="pr-4">
                               Quantity: {transaction.quantity}
                             </div>
