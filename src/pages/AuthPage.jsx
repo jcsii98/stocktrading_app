@@ -3,6 +3,7 @@ import SignupForm from "../components/SignupForm";
 import React, { useState } from "react";
 
 export default function AuthPage(props) {
+  const [successfulSignup, setSuccessfulSignup] = useState(false);
   const { setUserData, showSignin, setShowSignin, setIsLoggedIn } = props;
   return (
     <>
@@ -26,9 +27,13 @@ export default function AuthPage(props) {
             setUserData={setUserData}
             setIsLoggedIn={setIsLoggedIn}
             setShowSignin={setShowSignin}
+            setSuccessfulSignup={setSuccessfulSignup}
           />
         ) : (
-          <SignupForm setShowSignin={setShowSignin} />
+          <SignupForm
+            setShowSignin={setShowSignin}
+            setSuccessfulSignup={setSuccessfulSignup}
+          />
         )}
       </div>{" "}
     </>

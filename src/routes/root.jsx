@@ -67,6 +67,7 @@ export default function Root() {
               userData={userData}
               isLoggedIn={isLoggedIn}
               setCurrentPage={setCurrentPage}
+              setIsLoggedIn={setIsLoggedIn}
             />
             {isLoggedIn ? (
               <>
