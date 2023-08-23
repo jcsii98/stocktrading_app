@@ -100,13 +100,18 @@ export default function Home(props) {
             <h1 className="pt-4 text-3xl font-bold text-white">
               Welcome to your personal Crypto trading platform.
             </h1>
-            {userData.account_pending && (
-              <h2 className="pb-4 text-xl text-slate-400">
-                Your account is currently pending approval. You will receive an
-                email once it is approved.
-              </h2>
-            )}
           </div>
+          {userData.account_pending ? (
+            <h2 className="pb-4 text-xl text-slate-400">
+              Your account is currently pending approval. You will receive an
+              email once it is approved.
+            </h2>
+          ) : (
+            <h2 className="pb-4 text-xl text-slate-400">
+              Your account has been approved. You can now add portfolios to
+              start trading.
+            </h2>
+          )}
         </>
       )}
     </>

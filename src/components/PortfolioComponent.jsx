@@ -7,7 +7,7 @@ export default function PortfolioComponent(props) {
     <>
       {" "}
       <div
-        className="py-4 border-b grid grid-cols-6 items-center"
+        className="text-center py-4 border-b grid grid-cols-7 items-center"
         key={portfolios.id}
       >
         <div>{portfolios.id}</div>
@@ -22,7 +22,9 @@ export default function PortfolioComponent(props) {
             <div>{portfolios.stock_id}</div>
           </>
         )}
+
         <div>{portfolios.quantity}</div>
+        <div>{portfolios.price}</div>
         <div>{portfolios.total_amount}</div>
         <div>
           <button

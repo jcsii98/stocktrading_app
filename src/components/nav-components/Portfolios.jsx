@@ -147,7 +147,7 @@ export default function Portfolios(props) {
               />
             </h1>
           </div>
-          <div className="ml-8 self-center">
+          <div className="max-h-[36px] ml-8 self-center">
             {sortClicked && !portfolioDetails && (
               <div className="flex">
                 <label className="self-center relative block">
@@ -222,7 +222,7 @@ export default function Portfolios(props) {
             )}
           </div>
 
-          <div className="py-4 border-b grid grid-cols-6 text-slate-500">
+          <div className="text-center py-4 border-b grid grid-cols-7 text-slate-500">
             <div>Portfolio ID</div>
             {sortBy == "By Coin" ? (
               <>
@@ -237,12 +237,13 @@ export default function Portfolios(props) {
             )}
 
             <div>Portfolio Quantity</div>
-            <div>Total Value</div>
+            <div>Coin Price ($)</div>
+            <div>Total Value ($)</div>
             <div>Actions</div>
           </div>
           {portfolioDetails ? (
             <>
-              <div className="py-4 border-b grid grid-cols-6">
+              <div className="text-center py-4 border-b grid grid-cols-6">
                 <div className="self-center">{portfolioDetails.id}</div>
                 <div className="self-center">{portfolioDetails.stock_id}</div>
                 <div className="self-center">{portfolioDetails.user_id}</div>
@@ -264,15 +265,26 @@ export default function Portfolios(props) {
                   )}
                   {userRole == "user" &&
                   userData.id == portfolioDetails.user_id ? (
-                    <>Owned by user</>
+                    <button
+                      onClick={handleFetchTransactions}
+                      type="button"
+                      className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    >
+                      View Transactions
+                    </button>
                   ) : (
-                    <>Not owned by user</>
+                    <button
+                      type="button"
+                      className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    >
+                      Create Transaction
+                    </button>
                   )}
                 </div>
               </div>
               {transactionsFetched && (
                 <>
-                  <div className="py-4 border-b-[1.5px] grid grid-cols-2">
+                  <div className="py-4 grid grid-cols-2">
                     <div className="">
                       <h1 className="pr-4 border-b border-r py-4 text-xl text-slate-500">
                         Seller Transactions

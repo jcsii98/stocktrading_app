@@ -1,7 +1,43 @@
 import UserPng from "../../assets/user.png";
-
+import React, { useState, useEffect } from "react";
 export default function MyAccount(props) {
   const { userData, userRole } = props;
+  const [userBalance, setUserBalance] = useState([]);
+
+  async function fetchUserBalance() {
+    try {
+      const accessToken = localStorage.getItem("access-token");
+      const client = localStorage.getItem("client");
+      const uid = localStorage.getItem("uid");
+
+      const response = await fetch("http://localhost:3000/user", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "access-token": accessToken,
+          client: client,
+          uid: uid,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setUserBalance(data);
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching user balance:", error);
+      // Handle error appropriately (show an error message, etc.)
+      return { error: "An error occurred while fetching user balance" };
+    }
+  }
+
+  useEffect(() => {
+    fetchUserBalance();
+  }, []);
   return (
     <>
       <div className="">
@@ -25,22 +61,24 @@ export default function MyAccount(props) {
           </div>
           <div className="mt-4">
             <h4 className="text-lg font-semibold mb-2">Personal Details</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
+            <div className="">
+              <div className="pb-4">
                 <p className="text-gray-600">Username:</p>
                 <p>{userData.user_name}</p>
+                {userRole === "user" && (
+                  <>
+                    <p className="text-gray-600">User ID:</p>
+                    <p>{userData.id}</p>
+                  </>
+                )}
               </div>
 
               {userRole === "user" && (
                 <>
-                  <div>
-                    <p className="text-gray-600">user_id:</p>
-                    <p>{userData.id}</p>
-                  </div>
-                  <div>
+                  <div className="border-t pt-4">
                     <p className="text-gray-600">Balance:</p>
-                    <p>Wallet Balance: {userData.wallet_balance}</p>
-                    <p>Wallet Pending Amount: {userData.pending_amount}</p>
+                    <p>Wallet Balance: {userBalance.wallet_balance}</p>
+                    <p>Wallet Pending Amount: {userBalance.pending_amount}</p>
                   </div>
                 </>
               )}
