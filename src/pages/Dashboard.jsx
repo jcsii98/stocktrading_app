@@ -3,7 +3,7 @@ import MyAccount from "../components/nav-components/MyAccount";
 import Users from "../components/nav-components/Users";
 import Portfolios from "../components/nav-components/Portfolios";
 import MyPortfolios from "../components/nav-components/MyPortfolios";
-
+import Stocks from "../components/nav-components/Stocks";
 export default function Dashboard(props) {
   const { userData, userPending, currentPage, userRole } = props;
 
@@ -15,6 +15,7 @@ export default function Dashboard(props) {
           {currentPage === "Home" && (
             <Home userRole={userRole} userData={userData} />
           )}
+          {currentPage === "Stocks" && <Stocks />}
           {currentPage === "Portfolios" && (
             <Portfolios userRole={userRole} userData={userData} />
           )}

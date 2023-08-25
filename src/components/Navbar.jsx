@@ -73,6 +73,15 @@ export default function Navbar(props) {
                   <a
                     className="hover:text-[#316c8c] cursor-pointer	"
                     style={{ whiteSpace: "nowrap" }}
+                    onClick={() => setCurrentPage("Stocks")}
+                  >
+                    Stocks
+                  </a>
+                </li>
+                <li className="">
+                  <a
+                    className="hover:text-[#316c8c] cursor-pointer	"
+                    style={{ whiteSpace: "nowrap" }}
                     onClick={() => setCurrentPage("Portfolios")}
                   >
                     Portfolios
