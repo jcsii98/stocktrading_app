@@ -8,8 +8,8 @@ export default function Root() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showSignin, setShowSignin] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [currentPage, setCurrentPage] = useState("Home");
+  const [userData, setUserData] = useState(null);
 
   const rememberMe = async () => {
     const uid = localStorage.getItem("uid");
@@ -28,7 +28,9 @@ export default function Root() {
         });
         if (response.ok) {
           const responseData = await response.json();
-          setUserData(responseData.data.user);
+          console.log(responseData);
+
+          setUserData(responseData.data);
           setIsLoggedIn(true);
           setIsLoading(false);
         } else {
@@ -72,6 +74,7 @@ export default function Root() {
             {isLoggedIn ? (
               <>
                 <Dashboard
+                  setUserData={setUserData}
                   currentPage={currentPage}
                   userRole="user"
                   userData={userData}

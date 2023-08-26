@@ -19,6 +19,7 @@ export default function Portfolios(props) {
     useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState("");
+  const [quantity, setQuantity] = useState("");
 
   const toggleDropdown = () => {
     setDropdown(!dropdown);
@@ -36,8 +37,11 @@ export default function Portfolios(props) {
     setInputValue(event.target.value);
   };
 
+  const handleQuantityChange = (event) => {
+    setQuantity(event.target.value);
+  };
+
   const makeApiCall = async () => {
-    setIsLoading(true);
     const accessToken = localStorage.getItem("access-token");
     const client = localStorage.getItem("client");
     const uid = localStorage.getItem("uid");
@@ -99,7 +103,7 @@ export default function Portfolios(props) {
       const data = await response.json();
       console.log(data);
       setPortfolioDetails(data.data);
-      setCurrentTab("View");
+      setCurrentTab("Create Transaction");
     } catch (error) {
       console.error("Error fetching portfolio details:", error);
     }
@@ -144,6 +148,36 @@ export default function Portfolios(props) {
     setCreateTransactionClicked(true);
   };
 
+  const handleSubmitTransaction = async () => {
+    event.preventDefault();
+    console.log("Submitting Transaction for:", portfolioDetails.id);
+    const accessToken = localStorage.getItem("access-token");
+    const client = localStorage.getItem("client");
+    const uid = localStorage.getItem("uid");
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/portfolios/${portfolioDetails.id}/transactions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            quantity: parseFloat(quantity),
+          }),
+        }
+      );
+      const data = await response.json();
+
+      console.log(data);
+    } catch (error) {
+      console.error("An error has occured", error);
+    }
+  };
   return (
     <>
       <div className="pb-4 relative">
@@ -266,117 +300,112 @@ export default function Portfolios(props) {
         </>
       )}
 
-      {currentTab == "View" && (
+      {currentTab == "Create Transaction" && (
         <>
           <div className="bg-white p-6 rounded shadow">
-            {createTransactionClicked ? (
-              <>
-                <div className="pt-4">
-                  <div className="flex justify-between pb-4 border-b-[1.5px]">
-                    <div>
-                      <h1 className="text-2xl font-medium">
-                        Create a transaction
-                      </h1>
-                    </div>
-                    <div className="justify-self-end">
-                      <img
-                        onClick={() => setCreateTransactionClicked(false)}
-                        className="cursor-pointer w-4 h-4"
-                        src={Minimize}
-                        alt="Profile"
-                      />
-                    </div>
-                  </div>
-                  <form>
-                    <div className="pt-4">
-                      <label className="text-xl text-slate-500">Price</label>
-                      <br />
-                      <div className="py-[8px] px-[12px] h-[40px] w-[205px] border-none bg-slate-100 rounded-md">
-                        {portfolioDetails.price}
-                      </div>
-                      <label className="text-xl text-slate-500">Quantity</label>
-                      <br />
-                      <input
-                        placeholder="Enter desired quantity"
-                        className="h-[40px] w-[205px] border-none bg-slate-100 rounded-md"
-                        type="text"
-                      ></input>
-                      <button type="submit"></button>
-                    </div>
-                  </form>
+            <div>
+              <div className="flex justify-between pb-4 border-b-[1.5px]">
+                <div>
+                  <h1 className="text-2xl font-medium">
+                    Portfolio #{portfolioDetails.id}
+                  </h1>
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="flex justify-between pb-4 border-b-[1.5px]">
-                  <div>
-                    <h1 className="text-2xl font-medium">
-                      Portfolio #{portfolioDetails.id}
-                    </h1>
-                  </div>
-                  <div className="justify-self-end">
-                    <img
-                      onClick={handleMinimizeClicked}
-                      className="cursor-pointer w-4 h-4"
-                      src={Minimize}
-                      alt="Profile"
-                    />
-                  </div>
+                <div className="justify-self-end">
+                  <img
+                    onClick={handleMinimizeClicked}
+                    className="cursor-pointer w-4 h-4"
+                    src={Minimize}
+                    alt="Profile"
+                  />
                 </div>
-                <div className="text-center py-2 border-b grid grid-cols-7">
-                  <div>User ID</div>
-                  <div>Portfolio ID</div>
-                  <div className="">Coin Symbol</div>
+              </div>
+              <div className="text-center py-2 border-b grid grid-cols-7">
+                <div>User ID</div>
+                <div>Portfolio ID</div>
+                <div className="">Coin Symbol</div>
 
-                  <div>Coin Price ($)</div>
-                  <div>Portfolio Quantity</div>
+                <div>Coin Price ($)</div>
+                <div>Portfolio Quantity</div>
 
-                  <div>Total Value ($)</div>
-                  <div>Actions</div>
+                <div>Total Value ($)</div>
+                <div>Actions</div>
+              </div>
+              <div className="text-center py-2 border-b grid grid-cols-7">
+                <div className="self-center">{portfolioDetails.user_id}</div>
+                <div className="self-center">{portfolioDetails.id}</div>
+                <div className="self-center">
+                  {portfolioDetails.stock_symbol}
                 </div>
-                <div className="text-center py-2 border-b grid grid-cols-7">
-                  <div className="self-center">{portfolioDetails.user_id}</div>
-                  <div className="self-center">{portfolioDetails.id}</div>
-                  <div className="self-center">
-                    {portfolioDetails.stock_symbol}
-                  </div>
-                  <div className="self-center">{portfolioDetails.price}</div>
-                  <div className="self-center">{portfolioDetails.quantity}</div>
-                  <div className="self-center">
-                    {portfolioDetails.total_amount}
-                  </div>{" "}
-                  <div className="">
-                    {/* fetch transactions for admin*/}
+                <div className="self-center">{portfolioDetails.price}</div>
+                <div className="self-center">{portfolioDetails.quantity}</div>
+                <div className="self-center">
+                  {portfolioDetails.total_amount}
+                </div>{" "}
+                <div className="">
+                  {/* fetch transactions for admin*/}
 
-                    {userRole == "admin" && (
-                      <button
-                        onClick={handleFetchTransactions}
-                        type="button"
-                        className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                      >
-                        Fetch Transactions
-                      </button>
-                    )}
-                    {userRole == "user" &&
-                    userData.id == portfolioDetails.user_id ? (
+                  {userRole == "admin" && (
+                    <button
+                      onClick={handleFetchTransactions}
+                      type="button"
+                      className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    >
+                      Fetch Transactions
+                    </button>
+                  )}
+                  {userRole == "user" &&
+                  userData.id == portfolioDetails.user_id ? (
+                    <>
                       <div className="text-sm text-slate-500">
                         See My Portfolios for more info on this portfolio.
                       </div>
-                    ) : (
-                      <>
-                        <button
-                          onClick={toggleCreateTransactions}
-                          type="button"
-                          className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                        >
-                          Create Transaction
-                        </button>
-                      </>
-                    )}
-                  </div>
+                      <button
+                        onClick={handleSubmitTransaction}
+                        type="button"
+                        className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                      >
+                        Create Transaction
+                      </button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-              </>
-            )}
+              </div>
+            </div>
+            <div className="pt-4">
+              <div className="flex justify-between pb-4 border-b-[1.5px]">
+                <div>
+                  <h1 className="text-2xl font-medium">Create a transaction</h1>
+                </div>
+              </div>
+              <form onSubmit={handleSubmitTransaction}>
+                <div className="pt-4">
+                  <label className="text-xl text-slate-500">Price</label>
+                  <br />
+                  <div className="py-[8px] px-[12px] h-[40px] w-[205px] border-none bg-slate-100 rounded-md">
+                    {portfolioDetails.price}
+                  </div>
+                  <label className="text-xl text-slate-500">Quantity</label>
+                  <br />
+                  <input
+                    value={quantity}
+                    onChange={handleQuantityChange}
+                    placeholder="Enter desired quantity"
+                    className="h-[40px] w-[205px] border-none bg-slate-100 rounded-md"
+                    type="text"
+                  ></input>
+                </div>
+                <div className="pt-4">
+                  <button
+                    className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </>
       )}

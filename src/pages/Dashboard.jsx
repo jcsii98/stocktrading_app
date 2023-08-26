@@ -5,7 +5,7 @@ import Portfolios from "../components/nav-components/Portfolios";
 import MyPortfolios from "../components/nav-components/MyPortfolios";
 import Stocks from "../components/nav-components/Stocks";
 export default function Dashboard(props) {
-  const { userData, userPending, currentPage, userRole } = props;
+  const { setUserData, userData, userPending, currentPage, userRole } = props;
 
   return (
     <>
@@ -20,7 +20,11 @@ export default function Dashboard(props) {
             <Portfolios userRole={userRole} userData={userData} />
           )}
           {currentPage === "My Account" && (
-            <MyAccount userRole={userRole} userData={userData} />
+            <MyAccount
+              setUserData={setUserData}
+              userRole={userRole}
+              userData={userData}
+            />
           )}
           {userRole == "admin" && (
             <>
@@ -32,7 +36,9 @@ export default function Dashboard(props) {
           {userRole == "user" && (
             <>
               {/* user only nav items */}
-              {currentPage === "My Portfolios" && <MyPortfolios />}
+              {currentPage === "My Portfolios" && (
+                <MyPortfolios userData={userData} />
+              )}
             </>
           )}
         </div>

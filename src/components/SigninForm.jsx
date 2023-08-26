@@ -45,6 +45,8 @@ export default function SigninForm(props) {
           "access-token",
           response.headers.get("access-token")
         );
+        console.log("User Data:", responseData);
+
         setUserData(responseData.data);
         setMessage();
         setIsLoggedIn(true);

@@ -29,7 +29,7 @@ export default function PortfolioComponent(props) {
                 type="button"
                 className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
               >
-                View
+                Create Transaction
               </button>
             </>
           )}

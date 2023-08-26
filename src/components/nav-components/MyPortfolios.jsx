@@ -3,7 +3,8 @@ import Minimize from "../../assets/minimize.png";
 import React, { useState, useEffect } from "react";
 import DashboardLoading from "./DashboardLoading";
 
-export default function MyPortfolios() {
+export default function MyPortfolios(props) {
+  const { userRole, userData } = props;
   const [isLoading, setIsLoading] = useState(true);
   const [myPortfolios, setMyPortfolios] = useState([]);
   const [viewClicked, setViewClicked] = useState(false);
@@ -37,11 +38,18 @@ export default function MyPortfolios() {
 
       const data = await response.json();
       console.log(data);
-      setMyPortfolios(data.data);
+      if (data.data) {
+        setMyPortfolios(data.data);
+      }
+      if (data.message) {
+        setMyPortfolios();
+        setMessage(data.message);
+      }
       setIsLoading(false);
       return data;
     } catch (error) {
       console.error("Error fetching portfolios:", error);
+      setIsLoading(false);
       // Handle error appropriately (show an error message, etc.)
       return { error: "An error occurred while fetching portfolios" };
     }
@@ -194,13 +202,26 @@ export default function MyPortfolios() {
             </h1>
           </div>
           <div className="self-center">
-            <h1
-              onClick={handleAddPortfolioClicked}
-              type="button"
-              className="text-xl cursor-pointer font-medium text-white w-auto hover:text-[#316c8c]"
-            >
-              Add Portfolio
-            </h1>
+            {userData.account_pending ? (
+              <>
+                <h1
+                  type="button"
+                  className="text-xl font-medium text-white w-auto"
+                >
+                  Account is pending approval
+                </h1>
+              </>
+            ) : (
+              <>
+                <h1
+                  onClick={handleAddPortfolioClicked}
+                  type="button"
+                  className="text-xl cursor-pointer font-medium text-white w-auto hover:text-[#316c8c]"
+                >
+                  Add Portfolio
+                </h1>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -341,36 +362,42 @@ export default function MyPortfolios() {
                 </>
               ) : (
                 <>
-                  <div className="text-center items-center py-4 border-b grid grid-cols-6 text-slate-500">
-                    <div>Portfolio ID</div>
-                    <div>Coin Symbol</div>
-                    <div>Portfolio Quantity</div>
-                    <div>Coin Price</div>
-                    <div>Total Value</div>
-                    <div>Actions</div>
-                  </div>
-                  {myPortfolios.map((portfolio) => (
-                    <div
-                      key={portfolio.id}
-                      className="text-center items-center py-4 border-b grid grid-cols-6"
-                    >
-                      <div>{portfolio.id}</div>
-                      <div>{portfolio.stock_symbol}</div>
-                      <div>{portfolio.quantity}</div>
-
-                      <div>{portfolio.price}</div>
-                      <div>{portfolio.total_amount}</div>
-                      <div>
-                        <button
-                          onClick={() => fetchTransactions(portfolio.id)}
-                          type="button"
-                          className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                        >
-                          View Transactions
-                        </button>
+                  {myPortfolios ? (
+                    <>
+                      <div className="text-center items-center py-4 border-b grid grid-cols-6 text-slate-500">
+                        <div>Portfolio ID</div>
+                        <div>Coin Symbol</div>
+                        <div>Portfolio Quantity</div>
+                        <div>Coin Price</div>
+                        <div>Total Value</div>
+                        <div>Actions</div>
                       </div>
-                    </div>
-                  ))}
+                      {myPortfolios.map((portfolio) => (
+                        <div
+                          key={portfolio.id}
+                          className="text-center items-center py-4 border-b grid grid-cols-6"
+                        >
+                          <div>{portfolio.id}</div>
+                          <div>{portfolio.stock_symbol}</div>
+                          <div>{portfolio.quantity}</div>
+
+                          <div>{portfolio.price}</div>
+                          <div>{portfolio.total_amount}</div>
+                          <div>
+                            <button
+                              onClick={() => fetchTransactions(portfolio.id)}
+                              type="button"
+                              className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                            >
+                              View Transactions
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <div>{message}</div>
+                  )}
                 </>
               ))}
 
