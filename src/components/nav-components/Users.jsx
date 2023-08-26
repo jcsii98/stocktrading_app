@@ -167,7 +167,7 @@ export default function Users() {
                 />
               </>
             ) : (
-              <div className="grid grid-cols-3 gap-y-8">
+              <div className="grid grid-cols-4 gap-y-2">
                 {users.map((user) => (
                   <UserComponent
                     onClick={() => handleUserClicked(user.id)}

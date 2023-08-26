@@ -148,7 +148,7 @@ export default function Portfolios(props) {
     setCreateTransactionClicked(true);
   };
 
-  const handleSubmitTransaction = async () => {
+  const handleSubmitTransaction = async (event) => {
     event.preventDefault();
     console.log("Submitting Transaction for:", portfolioDetails.id);
     const accessToken = localStorage.getItem("access-token");

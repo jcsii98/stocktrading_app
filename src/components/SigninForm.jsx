@@ -20,7 +20,7 @@ export default function SigninForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Logging in");
+    setMessage("Signing in");
     setError();
     const requestData = {
       email: formData.email,
@@ -45,7 +45,7 @@ export default function SigninForm(props) {
           "access-token",
           response.headers.get("access-token")
         );
-        console.log("User Data:", responseData);
+        console.log("User Data:", responseData.data);
 
         setUserData(responseData.data);
         setMessage();
@@ -55,11 +55,12 @@ export default function SigninForm(props) {
         setMessage();
         setError(responseData.errors);
 
-        console.error("Sign in failed", responseData);
+        console.error("Sign in failed 1", responseData);
       }
     } catch (error) {
       setMessage();
-      console.error("An error occured:", error);
+      setError(error);
+      console.error("Sign in failed 2", error);
     }
   };
 
@@ -95,16 +96,11 @@ export default function SigninForm(props) {
               required
             />
           </div>
-          {message && <div className="text-slate-500">{message}</div>}
-          {error && (
-            <div className="text-red-500">
-              <ul>
-                {error.map((errorMessage, index) => (
-                  <li key={index}>{errorMessage}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="pb-2">
+            {" "}
+            {message && <div className="text-slate-500">{message}</div>}
+            {error && <div className="text-red-500">{error}</div>}
+          </div>
           <button
             type="submit"
             className="mb-2 bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"

@@ -49,11 +49,11 @@ export default function AdminSigninForm(props) {
       } else {
         setMessage();
         setError(responseData.errors);
-        console.error("Signin failed", responseData);
+        console.error("Signin failed 1:", responseData);
       }
     } catch (error) {
       setMessage();
-      console.error("An error occured:", error);
+      console.error("Signin failed 2:", error);
     }
   };
 
@@ -86,17 +86,10 @@ export default function AdminSigninForm(props) {
           </div>
 
           <div className="mb-2">
-            <div className="min-h-[25px]">
+            <div className="pb-2">
+              {" "}
               {message && <div className="text-slate-500">{message}</div>}
-              {error && (
-                <div className="text-red-500">
-                  <ul>
-                    {error.map((errorMessage, index) => (
-                      <li key={index}>{errorMessage}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {error && <div className="text-red-500">{error}</div>}
             </div>
             <button
               type="submit"

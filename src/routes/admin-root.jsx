@@ -71,6 +71,7 @@ export default function AdminRoot() {
             {isLoggedIn ? (
               <>
                 <Dashboard
+                  setUserData={setUserData}
                   userData={userData}
                   userRole="admin"
                   currentPage={currentPage}

@@ -23,6 +23,12 @@ export default function SignupForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormData((prevData) => ({
+      ...prevData,
+      password: "",
+      confirm_password: "",
+    }));
+
     setMessage("Signing up");
     setError();
 
@@ -45,22 +51,28 @@ export default function SignupForm(props) {
       });
 
       const responseData = await response.json();
-
+      console.log(responseData);
       if (response.ok) {
         // Handle successful response
-        console.log("Sign up successful");
-        setSuccessfulSignup(true);
-        setMessage();
+        if (responseData.status == "success") {
+          console.log("Success!");
+          setMessage("Please check your email for confirmation instructions");
+        } else {
+          setMessage();
+          setError(responseData.errors.full_messages);
+          console.error("Sign up failed 1", responseData);
+        }
       } else {
         // Handle error response
         setMessage();
-        setError(responseData.errors);
-        console.error("Sign up failed", responseData);
+        setError(responseData.errors.full_messages);
+        console.error("Sign up failed 2", responseData);
       }
     } catch (error) {
       // Handle fetch error
       setMessage();
-      console.error("An error occurred:", error);
+      setError(responseData.errors.full_messages);
+      console.error("Sign up failed 3:", error);
     }
   };
 
@@ -70,31 +82,9 @@ export default function SignupForm(props) {
   };
 
   return (
-    <div className="mx-auto w-[400px] mt-4 p-6 bg-white rounded shadow-md">
+    <div className="mx-auto w-[400px] mt-2 p-6 bg-white rounded shadow-md">
       <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-2">
-          <label className="block text-gray-700">Username</label>
-          <input
-            type="text"
-            name="user_name"
-            value={formData.user_name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
-            required
-          />
-        </div>
-        <div className="mb-2">
-          <label className="block text-gray-700">Full Name</label>
-          <input
-            type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
-            required
-          />
-        </div>
         <div className="mb-2">
           <label className="block text-gray-700">Email</label>
           <input
@@ -105,6 +95,30 @@ export default function SignupForm(props) {
             className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
             required
           />
+        </div>
+        <div className="grid grid-cols-2">
+          <div className="mb-2">
+            <label className="block text-gray-700">Username</label>
+            <input
+              type="text"
+              name="user_name"
+              value={formData.user_name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="mb-2">
+            <label className="block text-gray-700">Full Name</label>
+            <input
+              type="text"
+              name="full_name"
+              value={formData.full_name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
+              required
+            />
+          </div>
         </div>
         <div className="mb-2">
           <label className="block text-gray-700">Password</label>
@@ -128,16 +142,11 @@ export default function SignupForm(props) {
             required
           />
         </div>
-        {message && <div className="text-slate-500">{message}</div>}
-        {error && (
-          <div className="text-red-500">
-            <ul>
-              {error.full_messages.map((errorMessage, index) => (
-                <li key={index}>{errorMessage}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className="pb-2">
+          {" "}
+          {message && <div className="text-slate-500">{message}</div>}
+          {error && <div className="text-red-500">{error}</div>}
+        </div>
 
         <button
           type="submit"
