@@ -27,13 +27,16 @@ export default function AdminSigninForm(props) {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/admin_auth/sign_in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/admin_auth/sign_in",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
       const responseData = await response.json();
       if (response.ok) {
         localStorage.setItem("uid", response.headers.get("uid"));

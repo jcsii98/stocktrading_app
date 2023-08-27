@@ -65,7 +65,7 @@ export default function Portfolios(props) {
       if (sortBy === "By Coin") {
         setTimeout(async () => {
           const response = await fetch(
-            `http://localhost:3000/portfolios/index_by_stock_symbol?stock_symbol=${inputValue}`,
+            `https://stocktrading-api.onrender.com/portfolios/index_by_stock_symbol?stock_symbol=${inputValue}`,
             requestOptions
           );
           const data = await response.json();
@@ -77,7 +77,7 @@ export default function Portfolios(props) {
       } else if (sortBy === "By User") {
         setTimeout(async () => {
           const response = await fetch(
-            `http://localhost:3000/portfolios/index_by_user?user_id=${inputValue}`,
+            `https://stocktrading-api.onrender.com/portfolios/index_by_user?user_id=${inputValue}`,
             requestOptions
           );
           const data = await response.json();
@@ -104,7 +104,7 @@ export default function Portfolios(props) {
   const fetchPortfolioDetails = async (portfoliosId) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfoliosId}`,
+        `https://stocktrading-api.onrender.com/portfolios/${portfoliosId}`,
         {
           method: "GET",
           headers: {
@@ -136,7 +136,7 @@ export default function Portfolios(props) {
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfolioId}/transactions`,
+        `https://stocktrading-api.onrender.com/portfolios/${portfolioId}/transactions`,
         {
           method: "GET",
           headers: {
@@ -174,7 +174,7 @@ export default function Portfolios(props) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfolioDetails.id}/transactions`,
+        `https://stocktrading-api.onrender.com/portfolios/${portfolioDetails.id}/transactions`,
         {
           method: "POST",
           headers: {

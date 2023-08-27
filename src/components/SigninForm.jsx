@@ -28,13 +28,16 @@ export default function SigninForm(props) {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/auth/sign_in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/auth/sign_in",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
       const responseData = await response.json();
 
       if (response.ok) {

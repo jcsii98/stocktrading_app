@@ -11,15 +11,18 @@ export default function Stocks() {
       const client = localStorage.getItem("client");
       const uid = localStorage.getItem("uid");
 
-      const response = await fetch("http://localhost:3000/stocks/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/stocks/",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");

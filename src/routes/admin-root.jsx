@@ -16,14 +16,17 @@ export default function AdminRoot() {
 
     if (uid && client && accessToken) {
       try {
-        const response = await fetch("http://localhost:3000/admins_only", {
-          method: "GET",
-          headers: {
-            uid: uid,
-            client: client,
-            "access-token": accessToken,
-          },
-        });
+        const response = await fetch(
+          "https://stocktrading-api.onrender.com/admins_only",
+          {
+            method: "GET",
+            headers: {
+              uid: uid,
+              client: client,
+              "access-token": accessToken,
+            },
+          }
+        );
         if (response.ok) {
           const responseData = await response.json();
           setUserData(responseData.data.user);

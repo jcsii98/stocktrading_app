@@ -18,7 +18,7 @@ export default function MonitoringUser(props) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/pending_users/${monitoringUser.id}`,
+        `https://stocktrading-api.onrender.com/admin/pending_users/${monitoringUser.id}`,
         {
           method: "PATCH",
           headers: {

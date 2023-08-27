@@ -21,15 +21,18 @@ export default function Users() {
       const client = localStorage.getItem("client");
       const uid = localStorage.getItem("uid");
 
-      const response = await fetch("http://localhost:3000/admin/users", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/admin/users",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
       if (response.ok) {
         const usersData = await response.json();
         console.log(usersData);
@@ -52,7 +55,7 @@ export default function Users() {
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        "http://localhost:3000/admin/pending_users",
+        "https://stocktrading-api.onrender.com/admin/pending_users",
         {
           method: "GET",
           headers: {
@@ -84,7 +87,7 @@ export default function Users() {
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        `http://localhost:3000/admin/users/${userId}`,
+        `https://stocktrading-api.onrender.com/admin/users/${userId}`,
         {
           method: "GET",
           headers: {

@@ -24,15 +24,18 @@ export default function MyPortfolios(props) {
       const client = localStorage.getItem("client");
       const uid = localStorage.getItem("uid");
 
-      const response = await fetch("http://localhost:3000/portfolios/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/portfolios/",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -73,7 +76,7 @@ export default function MyPortfolios(props) {
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfolioId}/transactions`,
+        `https://stocktrading-api.onrender.com/portfolios/${portfolioId}/transactions`,
         {
           method: "GET",
           headers: {
@@ -120,7 +123,7 @@ export default function MyPortfolios(props) {
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfolioId}`,
+        `https://stocktrading-api.onrender.com/portfolios/${portfolioId}`,
         {
           method: "PATCH",
           headers: {
@@ -162,7 +165,7 @@ export default function MyPortfolios(props) {
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfolioId}/transactions/${transactionId}`,
+        `https://stocktrading-api.onrender.com/portfolios/${portfolioId}/transactions/${transactionId}`,
         {
           method: "PATCH",
           headers: {
@@ -228,21 +231,24 @@ export default function MyPortfolios(props) {
       const client = localStorage.getItem("client");
       const uid = localStorage.getItem("uid");
 
-      const response = await fetch("http://localhost:3000/portfolios", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-        body: JSON.stringify({
-          portfolio: {
-            stock_symbol: symbol,
-            quantity: quantity,
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/portfolios",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
           },
-        }),
-      });
+          body: JSON.stringify({
+            portfolio: {
+              stock_symbol: symbol,
+              quantity: quantity,
+            },
+          }),
+        }
+      );
 
       const responseData = await response.json();
       console.log(responseData);

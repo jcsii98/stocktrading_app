@@ -20,15 +20,18 @@ export default function MyAccount(props) {
       const client = localStorage.getItem("client");
       const uid = localStorage.getItem("uid");
 
-      const response = await fetch("http://localhost:3000/user", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/user",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -69,18 +72,21 @@ export default function MyAccount(props) {
     const uid = localStorage.getItem("uid");
 
     try {
-      const response = await fetch("http://localhost:3000/user", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-        body: JSON.stringify({
-          amount: parseFloat(cashInAmt),
-        }),
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/user",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            amount: parseFloat(cashInAmt),
+          }),
+        }
+      );
       const data = await response.json();
 
       if (response.ok) {

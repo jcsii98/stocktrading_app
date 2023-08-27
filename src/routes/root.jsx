@@ -18,14 +18,17 @@ export default function Root() {
 
     if (uid && client && accessToken) {
       try {
-        const response = await fetch("http://localhost:3000/users_only", {
-          method: "GET",
-          headers: {
-            uid: uid,
-            client: client,
-            "access-token": accessToken,
-          },
-        });
+        const response = await fetch(
+          "https://stocktrading-api.onrender.com/users_only",
+          {
+            method: "GET",
+            headers: {
+              uid: uid,
+              client: client,
+              "access-token": accessToken,
+            },
+          }
+        );
         if (response.ok) {
           const responseData = await response.json();
           console.log(responseData);

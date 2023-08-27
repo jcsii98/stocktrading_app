@@ -42,13 +42,16 @@ export default function SignupForm(props) {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        "https://stocktrading-api.onrender.com/auth",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       const responseData = await response.json();
       console.log(responseData);
