@@ -74,7 +74,7 @@ export default function SignupForm(props) {
     } catch (error) {
       // Handle fetch error
       setMessage();
-      setError(responseData.errors.full_messages);
+      setError("An error occurred while signing up. Please try again."); // Use a custom error message
       console.error("Sign up failed 3:", error);
     }
   };
