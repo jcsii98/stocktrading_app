@@ -9,7 +9,7 @@
 }
 
 .loading-icon {
-  animation: rotate 1.5s linear infinite;
+  animation: rotate 1.8s linear infinite;
 }
 
 @keyframes rotate {
@@ -33,4 +33,8 @@
   right: 0;
   bottom: 0;
   overflow-y: auto;
+}
+
+thead {
+  width: calc(100% - 1em);
 }

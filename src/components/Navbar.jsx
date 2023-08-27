@@ -18,7 +18,7 @@ export default function Navbar(props) {
 
   return (
     <>
-      <div className="border-b mb-10">
+      <div className="border-b mb-4">
         <div className="max-w-[1240px] flex justify-between items-center h-24 mx-auto text-white">
           <h1 className={"w-full text-3xl font-bold"}>
             {isLoggedIn ? <>Hi, {userData.full_name}</> : <>P2P Crypto</>}
@@ -28,27 +28,36 @@ export default function Navbar(props) {
               <>
                 <li className="">
                   <a
-                    className="hover:text-[#316c8c] cursor-pointer	"
+                    className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
                     style={{ whiteSpace: "nowrap" }}
                     onClick={() => setCurrentPage("Home")}
                   >
                     Home
                   </a>
+                </li>{" "}
+                <li className="">
+                  <a
+                    className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
+                    style={{ whiteSpace: "nowrap" }}
+                    onClick={() => setCurrentPage("Stocks")}
+                  >
+                    Coins
+                  </a>
                 </li>
                 <li className="">
                   <a
-                    className="hover:text-[#316c8c] cursor-pointer	"
+                    className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
                     style={{ whiteSpace: "nowrap" }}
-                    onClick={() => setCurrentPage("My Account")}
+                    onClick={() => setCurrentPage("Portfolios")}
                   >
-                    My Account
+                    Portfolios
                   </a>
                 </li>
                 {userRole === "admin" ? (
                   <>
                     <li className="">
                       <a
-                        className="hover:text-[#316c8c] cursor-pointer	"
+                        className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
                         style={{ whiteSpace: "nowrap" }}
                         onClick={() => setCurrentPage("Users")}
                       >
@@ -60,7 +69,7 @@ export default function Navbar(props) {
                   <>
                     <li className="">
                       <a
-                        className="hover:text-[#316c8c] cursor-pointer	"
+                        className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
                         style={{ whiteSpace: "nowrap" }}
                         onClick={() => setCurrentPage("My Portfolios")}
                       >
@@ -71,25 +80,16 @@ export default function Navbar(props) {
                 )}{" "}
                 <li className="">
                   <a
-                    className="hover:text-[#316c8c] cursor-pointer	"
+                    className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
                     style={{ whiteSpace: "nowrap" }}
-                    onClick={() => setCurrentPage("Stocks")}
+                    onClick={() => setCurrentPage("My Account")}
                   >
-                    Stocks
-                  </a>
-                </li>
-                <li className="">
-                  <a
-                    className="hover:text-[#316c8c] cursor-pointer	"
-                    style={{ whiteSpace: "nowrap" }}
-                    onClick={() => setCurrentPage("Portfolios")}
-                  >
-                    Portfolios
+                    My Account
                   </a>
                 </li>
                 <li onClick={handleSignout} className="">
                   <a
-                    className="hover:text-[#316c8c] cursor-pointer	"
+                    className="hover:text-white cursor-pointer	border-[1.5px] border-[#316c8c00] hover:border-white rounded-md mx-2 px-2 py-1"
                     style={{ whiteSpace: "nowrap" }}
                   >
                     Sign Out

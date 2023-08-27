@@ -59,46 +59,49 @@ export default function AdminSigninForm(props) {
 
   return (
     <>
-      <div className="mx-auto w-[400px] mt-4 p-6 bg-white rounded shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Sign In</h2>
-        <form className="h-auto" onSubmit={handleSubmit}>
-          <div className="mb-2">
-            <label className="block text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
-              required
-            />
+      <div className="flex items-center">
+        <div className="my-auto px-6 py-6 bg-white rounded shadow-md">
+          <div className="flex flex-col">
+            <h2 className="text-xl font-semibold mb-4">Sign In</h2>
+            <form className="" onSubmit={handleSubmit}>
+              <div className="mb-2">
+                <label className="text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="mb-2">
+                <label className="text-gray-700">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="">
+                <div className="py-2">
+                  {" "}
+                  {message && <div className="text-slate-500">{message}</div>}
+                  {error && <div className="text-red-500">{error}</div>}
+                </div>
+                <button
+                  type="submit"
+                  className="my-auto bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"
+                >
+                  Sign in
+                </button>
+              </div>
+            </form>
           </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded mt-1 focus:outline-none"
-              required
-            />
-          </div>
-
-          <div className="mb-2">
-            <div className="pb-2">
-              {" "}
-              {message && <div className="text-slate-500">{message}</div>}
-              {error && <div className="text-red-500">{error}</div>}
-            </div>
-            <button
-              type="submit"
-              className="my-auto bg-[#7f908f] text-white px-4 py-2 rounded hover:bg-[#003049] focus:outline-none focus:ring focus:border-[#003049]"
-            >
-              Sign in
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </>
   );

@@ -53,7 +53,7 @@ export default function SigninForm(props) {
         console.log("Sign in successful");
       } else {
         setMessage();
-        setError(responseData.errors);
+        setError(responseData.data.errors);
 
         console.error("Sign in failed 1", responseData);
       }

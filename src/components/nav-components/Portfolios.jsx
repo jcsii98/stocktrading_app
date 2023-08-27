@@ -17,9 +17,12 @@ export default function Portfolios(props) {
   const [sellerTransactions, setSellerTransactions] = useState([]);
   const [createTransactionClicked, setCreateTransactionClicked] =
     useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentTab, setCurrentTab] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [error, setError] = useState();
+  const [message, setMessage] = useState();
+  const [searching, setSearching] = useState();
 
   const toggleDropdown = () => {
     setDropdown(!dropdown);
@@ -42,6 +45,8 @@ export default function Portfolios(props) {
   };
 
   const makeApiCall = async () => {
+    setIsLoading(true);
+    setSearching(true);
     const accessToken = localStorage.getItem("access-token");
     const client = localStorage.getItem("client");
     const uid = localStorage.getItem("uid");
@@ -58,27 +63,34 @@ export default function Portfolios(props) {
 
     try {
       if (sortBy === "By Coin") {
-        const response = await fetch(
-          `http://localhost:3000/portfolios/index_by_stock_symbol?stock_symbol=${inputValue}`,
-          requestOptions
-        );
-        const data = await response.json();
-        setPortfoliosData(data.data);
-        setIsLoading(false);
-        console.log("Response from 'By Coin' API:", data);
+        setTimeout(async () => {
+          const response = await fetch(
+            `http://localhost:3000/portfolios/index_by_stock_symbol?stock_symbol=${inputValue}`,
+            requestOptions
+          );
+          const data = await response.json();
+          setPortfoliosData(data.data);
+          setIsLoading(false);
+          setSearching(false);
+          console.log("Response from 'By Coin' API:", data);
+        }, 1000); // 1 second delay
       } else if (sortBy === "By User") {
-        const response = await fetch(
-          `http://localhost:3000/portfolios/index_by_user?user_id=${inputValue}`,
-          requestOptions
-        );
-        const data = await response.json();
-        setPortfoliosData(data.data);
-        setIsLoading(false);
-        console.log("Response from 'By User' API:", data);
+        setTimeout(async () => {
+          const response = await fetch(
+            `http://localhost:3000/portfolios/index_by_user?user_id=${inputValue}`,
+            requestOptions
+          );
+          const data = await response.json();
+          setPortfoliosData(data.data);
+          setIsLoading(false);
+          setSearching(false);
+          console.log("Response from 'By User' API:", data);
+        }, 1000); // 1 second delay
       }
     } catch (error) {
       setPortfoliosData();
       setIsLoading(false);
+      setSearching(false);
       console.error("API error:", error);
     }
   };
@@ -86,6 +98,7 @@ export default function Portfolios(props) {
   const handleSubmit = () => {
     makeApiCall();
     setSearchClicked(true);
+    setSearching(true);
   };
 
   const fetchPortfolioDetails = async (portfoliosId) => {
@@ -111,16 +124,19 @@ export default function Portfolios(props) {
 
   const handleMinimizeClicked = () => {
     setCurrentTab("Base");
+    setMessage();
+    setError();
   };
 
-  const handleFetchTransactions = async () => {
+  const handleFetchTransactions = async (portfolioId) => {
+    setCurrentTab("Admin Monitor");
     try {
       const accessToken = localStorage.getItem("access-token");
       const client = localStorage.getItem("client");
       const uid = localStorage.getItem("uid");
 
       const response = await fetch(
-        `http://localhost:3000/portfolios/${portfolioDetails.id}/transactions`,
+        `http://localhost:3000/portfolios/${portfolioId}/transactions`,
         {
           method: "GET",
           headers: {
@@ -136,9 +152,6 @@ export default function Portfolios(props) {
       console.log("Fetched transactions:", data);
       setBuyerTransactions(data.buyer_transactions);
       setSellerTransactions(data.seller_transactions);
-
-      // Update state or perform other actions with the fetched transactions
-      setTransactionsFetched(true);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -150,7 +163,11 @@ export default function Portfolios(props) {
 
   const handleSubmitTransaction = async (event) => {
     event.preventDefault();
-    console.log("Submitting Transaction for:", portfolioDetails.id);
+    setError();
+    setMessage(
+      `Submitting Transaction for portfolio ID: ${portfolioDetails.id}`
+    );
+    setQuantity("");
     const accessToken = localStorage.getItem("access-token");
     const client = localStorage.getItem("client");
     const uid = localStorage.getItem("uid");
@@ -174,6 +191,16 @@ export default function Portfolios(props) {
       const data = await response.json();
 
       console.log(data);
+      if (response.ok) {
+        setMessage(
+          `Created Transaction ID: ${data.data.id}, Price: ${data.data.price}, Quantity: ${data.data.quantity}`
+        );
+      }
+
+      if (data.status == "error") {
+        setMessage();
+        setError(data.message);
+      }
     } catch (error) {
       console.error("An error has occured", error);
     }
@@ -213,14 +240,16 @@ export default function Portfolios(props) {
                     onChange={handleInputChange}
                   />
                 </label>{" "}
-                <div className="ml-6">
-                  <button
-                    onClick={handleSubmit}
-                    className="px-8 py-2 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                  >
-                    Search
-                  </button>
-                </div>
+                {inputValue !== "" && (
+                  <div className="ml-6">
+                    <button
+                      onClick={handleSubmit}
+                      className="px-8 py-2 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    >
+                      Search
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -246,131 +275,237 @@ export default function Portfolios(props) {
         )}
       </div>
 
-      {currentTab == "Base" && inputValue == "" && (
-        <h1 className="pt-4 text-xl text-slate-500">
-          {sortBy == "By Coin"
-            ? "Please enter a valid coin id."
-            : "Please enter a valid user id."}
-        </h1>
-      )}
-
-      {currentTab == "Base" && inputValue !== "" && (
+      {currentTab == "Base" && (
         <>
           {isLoading ? (
-            <DashboardLoading />
+            <DashboardLoading page={`Portfolios ${sortBy} ${inputValue}`} />
           ) : (
             <>
-              <div className="bg-white p-6 rounded shadow">
-                {searchClicked && portfoliosData.length > 0 ? (
-                  <>
-                    <h1 className="pb-4 text-2xl font-bold">
-                      {" "}
-                      {sortBy === "By Coin" ? <>By Coin</> : <>By User</>}
-                    </h1>
-                    <div className="text-center py-4 border-b grid grid-cols-7 text-slate-500">
-                      <div>User ID</div>
-                      <div>Portfolio ID</div>
-                      <div className="">Coin ID</div>
-
-                      <div>Coin Price ($)</div>
-                      <div>Portfolio Quantity</div>
-
-                      <div>Total Value ($)</div>
-                      <div>Actions</div>
-                    </div>
-                    <div className="overflow-y-auto max-h-[300px]">
-                      {portfoliosData.map((portfolios) => (
-                        <PortfolioComponent
-                          onClick={() => fetchPortfolioDetails(portfolios.id)}
-                          key={portfolios.id}
-                          sortBy={sortBy}
-                          portfolios={portfolios}
-                          userData={userData}
-                          portfolioDetails={portfolioDetails}
-                        />
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>No portfolios for the given Coin Symbol</>
-                )}
-              </div>
+              {searchClicked && (
+                <>
+                  <div className="bg-white p-6 rounded shadow">
+                    {portfoliosData.length > 0 ? (
+                      <>
+                        <h1 className="pb-4 text-2xl font-bold">
+                          {" "}
+                          {sortBy === "By Coin" ? <>By Coin</> : <>By User</>}
+                        </h1>
+                        <div className="max-h-[400px] overflow-y-auto">
+                          <table className="w-full">
+                            <thead className="text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                              <tr className="text-xl table-fixed w-full table">
+                                <th className="pl-2 text-start">
+                                  Portfolio ID
+                                </th>
+                                <th className="text-start">User ID</th>
+                                <th className="text-end">Coin Symbol</th>
+                                <th className="text-end">Coin Price ($)</th>
+                                <th className="text-end">Quantity</th>
+                                <th className="text-end">Total ($)</th>
+                                <th className="">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="block max-h-[350px] overflow-auto">
+                              {portfoliosData.map((portfolios) => (
+                                <PortfolioComponent
+                                  onClick={() =>
+                                    fetchPortfolioDetails(portfolios.id)
+                                  }
+                                  key={portfolios.id}
+                                  sortBy={sortBy}
+                                  portfolios={portfolios}
+                                  userData={userData}
+                                  portfolioDetails={portfolioDetails}
+                                  userRole={userRole}
+                                  handleFetchTransactions={
+                                    handleFetchTransactions
+                                  }
+                                />
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="">
+                          <h1 className="pb-4 text-3xl font-bold text-slate-500">
+                            Oops!
+                          </h1>
+                          <h1 className="text-xl font-medium text-slate-500">
+                            No portfolios found. Please try again.
+                          </h1>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
         </>
       )}
-
+      {currentTab == "Admin Monitor" && (
+        <>
+          <div className="bg-white p-6 rounded shadow">
+            <div className="flex flex-col">
+              <div className="border-b-[1.5px]">
+                <div className="select-none flex justify-between">
+                  <h1 className="text-slate-700 text-3xl font-bold">
+                    Seller Transactions
+                  </h1>
+                  <h1
+                    onClick={handleMinimizeClicked}
+                    className="text-slate-700 text-xl font-bold cursor-pointer"
+                  >
+                    Go back
+                  </h1>
+                </div>
+                {sellerTransactions.length > 0 ? (
+                  <>
+                    <div className="py-4 max-h-[200px] overflow-y-auto">
+                      <table className="w-full">
+                        <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                          <tr className="text-xl table-fixed w-full table">
+                            <th className="pl-2 text-start">Transaction ID</th>
+                            <th className="text-start">Quantity</th>
+                            <th className="text-end">Coin Price ($)</th>
+                            <th className="text-end">Total Value</th>
+                            <th className="text-center">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="block max-h-[120px] overflow-auto">
+                          {sellerTransactions.map((transaction) => (
+                            <tr
+                              className="table-fixed h-[2rem] w-full table border-y hover:bg-slate-500 bg-slate-100 hover:text-white font-normal"
+                              key={transaction.id}
+                            >
+                              <td className="pl-2 text-start">
+                                {transaction.id}
+                              </td>
+                              <td className="text-start">
+                                {transaction.quantity}
+                              </td>
+                              <td className="text-end">{transaction.price}</td>
+                              <td className="text-end">{transaction.amount}</td>
+                              <td className="text-center">
+                                {transaction.status}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="select-none py-4 font-medium text-slate-500">
+                      No seller transactions found.
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="pt-4">
+                <h1 className="select-none text-slate-700 text-3xl font-bold">
+                  Buyer Transactions
+                </h1>
+                {buyerTransactions.length > 0 ? (
+                  <>
+                    <div className="py-4 max-h-[200px] overflow-y-auto">
+                      <table className="w-full">
+                        <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                          <tr className="text-xl table-fixed w-full table">
+                            <th className="pl-2 text-start">Transaction ID</th>
+                            <th className="text-start">Quantity</th>
+                            <th className="text-end">Coin Price ($)</th>
+                            <th className="text-end">Total Value</th>
+                            <th className="text-center">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="block max-h-[150px] overflow-auto">
+                          {buyerTransactions.map((transaction) => (
+                            <tr
+                              className="table-fixed h-[2rem] w-full table border-y hover:bg-slate-500 bg-slate-100 hover:text-white font-normal"
+                              key={transaction.id}
+                            >
+                              <td className="pl-2 text-start">
+                                {transaction.id}
+                              </td>
+                              <td className="text-start">
+                                {transaction.quantity}
+                              </td>
+                              <td className="text-end">{transaction.price}</td>
+                              <td className="text-end">{transaction.amount}</td>
+                              <td className="text-center">
+                                {transaction.status}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="select-none pt-4 font-medium text-slate-500">
+                      No buyer transactions found.
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       {currentTab == "Create Transaction" && (
         <>
           <div className="bg-white p-6 rounded shadow">
             <div>
-              <div className="flex justify-between pb-4 border-b-[1.5px]">
+              <div className="flex justify-between pb-4">
                 <div>
                   <h1 className="text-2xl font-medium">
                     Portfolio #{portfolioDetails.id}
                   </h1>
                 </div>
                 <div className="justify-self-end">
-                  <img
+                  <button
                     onClick={handleMinimizeClicked}
-                    className="cursor-pointer w-4 h-4"
-                    src={Minimize}
-                    alt="Profile"
-                  />
+                    className="border-2 rounded-md px-4 py-1 hover:border-[#316c8c] font-medium text-xl text-[#316c8c]"
+                    type="button"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
-              <div className="text-center py-2 border-b grid grid-cols-7">
-                <div>User ID</div>
-                <div>Portfolio ID</div>
-                <div className="">Coin Symbol</div>
-
-                <div>Coin Price ($)</div>
-                <div>Portfolio Quantity</div>
-
-                <div>Total Value ($)</div>
-                <div>Actions</div>
-              </div>
-              <div className="text-center py-2 border-b grid grid-cols-7">
-                <div className="self-center">{portfolioDetails.user_id}</div>
-                <div className="self-center">{portfolioDetails.id}</div>
-                <div className="self-center">
-                  {portfolioDetails.stock_symbol}
-                </div>
-                <div className="self-center">{portfolioDetails.price}</div>
-                <div className="self-center">{portfolioDetails.quantity}</div>
-                <div className="self-center">
-                  {portfolioDetails.total_amount}
-                </div>{" "}
-                <div className="">
-                  {/* fetch transactions for admin*/}
-
-                  {userRole == "admin" && (
-                    <button
-                      onClick={handleFetchTransactions}
-                      type="button"
-                      className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                    >
-                      Fetch Transactions
-                    </button>
-                  )}
-                  {userRole == "user" &&
-                  userData.id == portfolioDetails.user_id ? (
-                    <>
-                      <div className="text-sm text-slate-500">
-                        See My Portfolios for more info on this portfolio.
-                      </div>
-                      <button
-                        onClick={handleSubmitTransaction}
-                        type="button"
-                        className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
-                      >
-                        Create Transaction
-                      </button>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </div>
+              <div className="border-y-[1.5px] py-4">
+                <table className="w-full table-auto">
+                  <thead className="text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                    <tr className="text-xl">
+                      <th className="pl-4 text-start">User ID#</th>
+                      <th className="text-start">Portfolio ID#</th>
+                      <th className="text-end">Coin Symbol</th>
+                      <th className="text-end">Coin Price ($)</th>
+                      <th className="text-end">Portfolio Quantity</th>
+                      <th className="text-end">Total Value ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="h-[2rem] border-y hover:text-white hover:bg-slate-500 bg-slate-100">
+                      <td className="pl-4 text-start">
+                        {portfolioDetails.user_id}
+                      </td>
+                      <td className="text-start">{portfolioDetails.id}</td>
+                      <td className="text-end">
+                        {portfolioDetails.stock_symbol}
+                      </td>
+                      <td className="text-end">{portfolioDetails.price}</td>
+                      <td className="text-end">{portfolioDetails.quantity}</td>
+                      <td className="text-end">
+                        {portfolioDetails.total_amount}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
             <div className="pt-4">
@@ -381,24 +516,32 @@ export default function Portfolios(props) {
               </div>
               <form onSubmit={handleSubmitTransaction}>
                 <div className="pt-4">
-                  <label className="text-xl text-slate-500">Price</label>
-                  <br />
-                  <div className="py-[8px] px-[12px] h-[40px] w-[205px] border-none bg-slate-100 rounded-md">
-                    {portfolioDetails.price}
+                  <div className="py-2">
+                    <div className="text-slate-600 py-[8px] px-[12px] h-[40px] w-[205px] border-none bg-slate-100 rounded-md">
+                      <span className="">$</span>
+                      {portfolioDetails.price}
+                    </div>
                   </div>
-                  <label className="text-xl text-slate-500">Quantity</label>
-                  <br />
-                  <input
-                    value={quantity}
-                    onChange={handleQuantityChange}
-                    placeholder="Enter desired quantity"
-                    className="h-[40px] w-[205px] border-none bg-slate-100 rounded-md"
-                    type="text"
-                  ></input>
+
+                  <div className="py-2">
+                    <input
+                      value={quantity}
+                      onChange={handleQuantityChange}
+                      placeholder="Quantity"
+                      className="h-[40px] w-[205px] border-none bg-slate-100 rounded-md"
+                      type="text"
+                    ></input>
+                  </div>
                 </div>
-                <div className="pt-4">
+
+                <div className="py-2">
+                  {" "}
+                  <div className="pb-2">
+                    {message && <div className="text-slate-500">{message}</div>}
+                    {error && <div className="text-red-500">{error}</div>}
+                  </div>
                   <button
-                    className="px-4 py-1 text-white w-auto rounded-full bg-gray-400 hover:bg-[#316c8c]"
+                    className="mr-4 border-2 rounded-md px-4 py-1 hover:border-[#316c8c] font-medium text-xl text-[#316c8c]"
                     type="submit"
                   >
                     Submit

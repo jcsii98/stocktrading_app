@@ -14,8 +14,10 @@ export default function MyPortfolios(props) {
   const [symbol, setSymbol] = useState("");
   const [quantity, setQuantity] = useState("");
   const [currentTab, setCurrentTab] = useState("Base");
+  const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [newQuantity, setNewQuantity] = useState("");
   async function fetchPortfolios() {
     try {
       const accessToken = localStorage.getItem("access-token");
@@ -101,7 +103,59 @@ export default function MyPortfolios(props) {
     }
   }
 
+  const handleEditClicked = (portfolioId) => {
+    setError();
+    setMessage();
+    setCurrentTab("Edit");
+    setCurrentPortfolio(portfolioId);
+  };
+
+  async function updatePortfolioQuantity(portfolioId, newQuantity) {
+    setError();
+    setNewQuantity("");
+    setMessage(`Updating quantity for portfolio: ${portfolioId}`);
+    try {
+      const accessToken = localStorage.getItem("access-token");
+      const client = localStorage.getItem("client");
+      const uid = localStorage.getItem("uid");
+
+      const response = await fetch(
+        `http://localhost:3000/portfolios/${portfolioId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({ quantity: newQuantity }), // Sending the updated quantity
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) {
+        setMessage();
+        setError(data.errors);
+      }
+
+      if (data.status == "success") {
+        setMessage(
+          `Successfully updated portfolio quantity. New quantity: ${data.data.quantity}`
+        );
+        fetchPortfolios();
+        setError();
+      }
+    } catch (error) {
+      console.error("Error updating portfolio:", error);
+      setError(data.errors);
+    }
+  }
+
   async function approveTransaction(portfolioId, transactionId) {
+    setError();
+    setMessage(`Approving Transaction: ${transactionId}`);
     try {
       const accessToken = localStorage.getItem("access-token");
       const client = localStorage.getItem("client");
@@ -137,18 +191,30 @@ export default function MyPortfolios(props) {
   }
 
   const handleMinimizeClicked = () => {
+    setError();
+    setMessage();
     setCurrentTab("Base");
     setViewClicked(false);
+    setEditing(false);
   };
 
   const handleAddPortfolioClicked = () => {
+    setError();
+    setMessage();
     setCurrentTab("Create");
+    setEditing(false);
   };
+
   const handleCancelClicked = () => {
+    setMessage();
+    setError();
+    setEditing(false);
     setCurrentTab("Base");
   };
 
   const handleViewClicked = () => {
+    setError();
+    setMessage();
     setViewClicked(true);
   };
 
@@ -182,6 +248,7 @@ export default function MyPortfolios(props) {
       console.log(responseData);
       if (!response.ok) {
         setError(responseData.errors);
+        setMessage();
       }
 
       if (response.ok) {
@@ -203,28 +270,128 @@ export default function MyPortfolios(props) {
 
   return (
     <>
-      <div className="pb-4 relative">
-        <div className="flex justify-between">
-          <div className="self-center">
-            <h1 className="text-3xl font-bold text-white flex items-center">
-              My Portfolios
-            </h1>
-          </div>
-          <div className="self-center"></div>
-        </div>
+      <div className="select-none pb-4 flex justify-between">
+        <h2 className="text-3xl font-bold text-white">My Portfolios</h2>
+        {!userData.account_pending && (
+          <>
+            <button
+              onClick={
+                currentTab === "Create"
+                  ? handleCancelClicked
+                  : handleAddPortfolioClicked
+              }
+              type="button"
+              className="border-[1.5px] border-[#00000200] rounded-md px-4 text-xl cursor-pointer font-medium text-white w-auto hover:border-white"
+            >
+              {currentTab === "Create" ? "Cancel" : "Add Portfolio"}
+            </button>
+          </>
+        )}
       </div>
       {isLoading ? (
-        <DashboardLoading />
+        <DashboardLoading page="Your Portfolios" />
       ) : (
         <>
           <div className="bg-white p-6 rounded shadow">
+            {currentTab == "Edit" && (
+              <>
+                <div className="justify-between flex">
+                  <h1 className="text-slate-700 text-2xl font-bold">
+                    Editing portfolio: {currentPortfolio}
+                  </h1>
+                </div>
+                <div className="pt-4 max-h-[350px] overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                      <tr className="text-xl table-fixed w-full table">
+                        <th className="pl-2 text-start">ID#</th>
+                        <th className="text-start">Coin Symbol</th>
+                        <th className="text-end">Quantity</th>
+                        <th className="text-end">Coin Price ($)</th>
+                        <th className="text-end pr-2">Total Value ($)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="block max-h-[300px] overflow-auto">
+                      {myPortfolios.map((portfolio) => {
+                        if (portfolio.id === currentPortfolio) {
+                          return (
+                            <tr
+                              key={portfolio.id}
+                              className="table-fixed table w-full h-[2rem] border-y hover:text-white hover:bg-slate-500 bg-slate-100"
+                            >
+                              <td className="pl-2 font-thin text-start">
+                                {portfolio.id}
+                              </td>
+                              <td className="font-thin text-start">
+                                {portfolio.stock_symbol}
+                              </td>
+                              <td className="font-thin text-end">
+                                <div>{portfolio.quantity}</div>
+                              </td>
+                              <td className="font-thin text-end">
+                                <div>{portfolio.price}</div>
+                              </td>
+                              <td className="font-thin text-end pr-2">
+                                <div>{portfolio.total_amount}</div>
+                              </td>
+                            </tr>
+                          );
+                        } else {
+                          return null; // Skip rendering if not the current portfolio
+                        }
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="pt-4">
+                  {" "}
+                  <form
+                    className="max-w-[500px] flex flex-col"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      updatePortfolioQuantity(currentPortfolio, newQuantity);
+                    }}
+                  >
+                    <input
+                      className="rounded-md border-none bg-slate-100"
+                      type="text"
+                      placeholder="New Quantity"
+                      value={newQuantity}
+                      onChange={(e) => setNewQuantity(e.target.value)}
+                    ></input>
+                    <div>
+                      <div className="py-2">
+                        {" "}
+                        {message && (
+                          <div className="text-slate-500">{message}</div>
+                        )}
+                        {error && <div className="text-red-500">{error}</div>}
+                      </div>
+                      <button
+                        className="mr-4 border-2 rounded-md px-4 py-1 hover:border-black font-medium text-xl text-black border-[#316c8c00]"
+                        type="submit"
+                      >
+                        Submit
+                      </button>
+                      <button
+                        onClick={handleCancelClicked}
+                        className="border-2 rounded-md px-4 py-1 hover:border-black font-medium text-xl text-black border-[#316c8c00]"
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </>
+            )}
             {currentTab == "Base" &&
               (viewClicked ? (
                 <>
-                  <div className="grid grid-rows-[1fr,1fr] gap-4 h-[400px]">
-                    <div className="">
-                      <div className="flex justify-between">
-                        <h1 className="pb-4 text-slate-700 text-3xl font-bold">
+                  <div className="flex flex-col">
+                    <div className="border-b-[1.5px]">
+                      <div className="select-none flex justify-between">
+                        <h1 className="text-slate-700 text-3xl font-bold">
                           Seller Transactions
                         </h1>
                         <h1
@@ -234,118 +401,127 @@ export default function MyPortfolios(props) {
                           Go back
                         </h1>
                       </div>
-
-                      <div className="overflow-auto h-[130px]">
-                        <table className="w-full table-auto">
-                          <thead className="text-slate-500 font-medium">
-                            <tr className="">
-                              <th className="text-start">ID#</th>
-                              <th className="text-start">Quantity</th>
-                              <th className="text-end">Coin Price</th>
-                              <th className="text-end">Total Value</th>
-                              <th className="text-end">Status</th>
-                              <th className="">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="">
-                            {sellerTransactions.map((transaction) => (
-                              <tr
-                                key={transaction.id}
-                                className="hover:bg-slate-100"
-                              >
-                                <td className="text-start">{transaction.id}</td>
-                                <td className="text-start">
-                                  {transaction.quantity}
-                                </td>
-                                <td className="text-end">
-                                  {transaction.quantity}
-                                </td>
-                                <td className="text-end">
-                                  {transaction.price}
-                                </td>
-                                <td className="text-end">
-                                  {transaction.status}
-                                </td>
-                                <td className="">
-                                  {transaction.status == "pending" && (
-                                    <>
-                                      <h1
-                                        onClick={() =>
-                                          approveTransaction(
-                                            currentPortfolio,
-                                            transaction.id
-                                          )
-                                        }
-                                        className="cursor-pointer text-center"
-                                      >
-                                        Approve
-                                      </h1>
-                                    </>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                      {sellerTransactions.length > 0 ? (
+                        <>
+                          <div className="py-4 max-h-[200px] overflow-y-auto">
+                            <table className="w-full">
+                              <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                                <tr className="text-xl table-fixed w-full table">
+                                  <th className="pl-2 text-start">
+                                    Transaction ID
+                                  </th>
+                                  <th className="text-start">Quantity</th>
+                                  <th className="text-end">Coin Price ($)</th>
+                                  <th className="text-end">Total Value</th>
+                                  <th className="text-end">Status</th>
+                                  <th className="text-center">Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody className="block max-h-[120px] overflow-auto">
+                                {sellerTransactions.map((transaction) => (
+                                  <tr
+                                    className="table-fixed h-[2rem] w-full table border-y hover:bg-slate-500 bg-slate-100 hover:text-white font-normal"
+                                    key={transaction.id}
+                                  >
+                                    <td className="pl-2 text-start">
+                                      {transaction.id}
+                                    </td>
+                                    <td className="text-start">
+                                      {transaction.quantity}
+                                    </td>
+                                    <td className="text-end">
+                                      {transaction.price}
+                                    </td>
+                                    <td className="text-end">
+                                      {transaction.amount}
+                                    </td>
+                                    <td className="text-end">
+                                      {transaction.status}
+                                    </td>
+                                    <td className="text-center">
+                                      {transaction.status == "pending" && (
+                                        <>
+                                          <button
+                                            onClick={() =>
+                                              approveTransaction(
+                                                currentPortfolio,
+                                                transaction.id
+                                              )
+                                            }
+                                            className="select-none border-[1px] rounded-md mx-2 px-2 text-sm cursor-pointer font-medium w-auto hover:border-white border-[#00000000]"
+                                          >
+                                            Approve
+                                          </button>
+                                        </>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="select-none py-4 font-medium text-slate-500">
+                            No seller transactions found.
+                          </div>
+                        </>
+                      )}
                     </div>
-                    <div className="">
-                      <h1 className="pb-4 text-slate-700 text-3xl font-bold">
+                    <div className="pt-4">
+                      <h1 className="select-none text-slate-700 text-3xl font-bold">
                         Buyer Transactions
                       </h1>
-                      <div className="overflow-auto h-[130px]">
-                        <table className="w-full table-auto h-[100px]">
-                          <thead className="text-slate-500 font-medium">
-                            <tr className="">
-                              <th className="text-start">ID#</th>
-                              <th className="text-start">Quantity</th>
-                              <th className="text-end">Coin Price</th>
-                              <th className="text-end">Total Value</th>
-                              <th className="text-end">Status</th>
-                              <th className="">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="overflow-y-auto max-h-[120px]">
-                            {buyerTransactions.map((transaction) => (
-                              <tr
-                                key={transaction.id}
-                                className="hover:bg-slate-100"
-                              >
-                                <td className="text-start">{transaction.id}</td>
-                                <td className="text-start">
-                                  {transaction.quantity}
-                                </td>
-                                <td className="text-end">
-                                  {transaction.quantity}
-                                </td>
-                                <td className="text-end">
-                                  {transaction.price}
-                                </td>
-                                <td className="text-end">
-                                  {transaction.status}
-                                </td>
-                                <td className="">
-                                  {transaction.status == "pending" && (
-                                    <>
-                                      <h1
-                                        onClick={() =>
-                                          approveTransaction(
-                                            currentPortfolio,
-                                            transaction.id
-                                          )
-                                        }
-                                        className="cursor-pointer text-center"
-                                      >
-                                        Approve
-                                      </h1>
-                                    </>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                      {buyerTransactions.length > 0 ? (
+                        <>
+                          <div className="py-4 max-h-[200px] overflow-y-auto">
+                            <table className="w-full">
+                              <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                                <tr className="text-xl table-fixed w-full table">
+                                  <th className="pl-2 text-start">
+                                    Transaction ID
+                                  </th>
+                                  <th className="text-start">Quantity</th>
+                                  <th className="text-end">Coin Price ($)</th>
+                                  <th className="text-end">Total Value</th>
+                                  <th className="text-center">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody className="block max-h-[150px] overflow-auto">
+                                {buyerTransactions.map((transaction) => (
+                                  <tr
+                                    className="table-fixed h-[2rem] w-full table border-y hover:bg-slate-500 bg-slate-100 hover:text-white font-normal"
+                                    key={transaction.id}
+                                  >
+                                    <td className="pl-2 text-start">
+                                      {transaction.id}
+                                    </td>
+                                    <td className="text-start">
+                                      {transaction.quantity}
+                                    </td>
+                                    <td className="text-end">
+                                      {transaction.price}
+                                    </td>
+                                    <td className="text-end">
+                                      {transaction.amount}
+                                    </td>
+                                    <td className="text-center">
+                                      {transaction.status}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="select-none pt-4 font-medium text-slate-500">
+                            No buyer transactions found.
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </>
@@ -353,65 +529,73 @@ export default function MyPortfolios(props) {
                 <>
                   {myPortfolios ? (
                     <>
-                      <div className="py-4">
-                        <table className="mx-auto table-auto">
-                          <thead className="text-slate-500 font-medium">
-                            <tr className="border-b">
-                              <th className="pr-4">ID#</th>
-                              <th className="pr-12">Coin Symbol</th>
-                              <th className="pl-4">Quantity</th>
-                              <th className="pl-4">Coin Price</th>
-                              <th className="pl-4">Total Value</th>
-                              <th className="px-20">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="overflow-y-auto max-h-[350px]">
-                            {myPortfolios.map((portfolio) => (
-                              <tr
-                                key={portfolio.id}
-                                className="hover:bg-slate-100"
-                              >
-                                <td className="text-start">{portfolio.id}</td>
-                                <td className="text-start">
-                                  {portfolio.stock_symbol}
-                                </td>
-                                <td className="text-end">
-                                  <div>{portfolio.quantity}</div>
-                                </td>
-                                <td className="text-end">
-                                  <div>{portfolio.price}</div>
-                                </td>
-                                <td className="text-end">
-                                  <div>{portfolio.total_amount}</div>
-                                </td>
-
-                                <td className="px-20">
-                                  <button
-                                    onClick={() =>
-                                      fetchTransactions(portfolio.id)
-                                    }
-                                    type="button"
-                                    className="border-[1.5px] rounded-md mx-2 px-2 text-sm cursor-pointer font-medium w-auto hover:border-[#316c8c]"
-                                  >
-                                    View
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="border-[1.5px] rounded-md mx-2 px-2 text-sm cursor-pointer font-medium w-auto hover:border-[#316c8c]"
-                                  >
-                                    Edit
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="border-[1.5px] rounded-md mx-2 px-2 text-sm cursor-pointer font-medium w-auto hover:border-[#316c8c]"
-                                  >
-                                    Delete
-                                  </button>
-                                </td>
+                      <div className="mb-4">
+                        <div className="border-b-[1.5px] justify-between flex pb-4 mb-8">
+                          <h1 className="select-none text-slate-700 text-3xl font-bold">
+                            {userData.full_name}'s portfolios
+                          </h1>
+                        </div>
+                        <div className="max-h-[350px] overflow-y-auto">
+                          <table className="w-full">
+                            <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
+                              <tr className="text-xl table-fixed w-full table">
+                                <th className="pl-2 text-start">ID#</th>
+                                <th className="text-start">Coin Symbol</th>
+                                <th className="text-end">Quantity</th>
+                                <th className="text-end">Coin Price ($)</th>
+                                <th className="text-end">Total Value ($)</th>
+                                <th className="text-center">Actions</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody className="block max-h-[300px] overflow-auto">
+                              {myPortfolios.map((portfolio) => (
+                                <tr
+                                  key={portfolio.id}
+                                  className="table-fixed table w-full h-[2rem] border-y hover:text-white hover:bg-slate-500 bg-slate-100"
+                                >
+                                  <td className="pl-2 font-thin text-start">
+                                    {portfolio.id}
+                                  </td>
+                                  <td className="font-thin text-start">
+                                    {portfolio.stock_symbol}
+                                  </td>
+                                  <td className="font-thin text-end">
+                                    <div>{portfolio.quantity}</div>
+                                  </td>
+                                  <td className="font-thin text-end">
+                                    <div>{portfolio.price}</div>
+                                  </td>
+                                  <td className="font-thin text-end">
+                                    <div>{portfolio.total_amount}</div>
+                                  </td>
+
+                                  <td className="select-none ">
+                                    <div className="flex items-center justify-center">
+                                      <button
+                                        onClick={() =>
+                                          fetchTransactions(portfolio.id)
+                                        }
+                                        type="button"
+                                        className="border-[1.5px] border-[#316c8c00] rounded-md mx-2 px-2 cursor-pointer font-normal w-auto hover:border-white"
+                                      >
+                                        View
+                                      </button>
+                                      <button
+                                        onClick={() =>
+                                          handleEditClicked(portfolio.id)
+                                        }
+                                        type="button"
+                                        className="border-[1.5px] border-[#316c8c00] rounded-md mx-2 px-2 cursor-pointer font-normal w-auto hover:border-white"
+                                      >
+                                        Edit
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </>
                   ) : (
@@ -442,7 +626,7 @@ export default function MyPortfolios(props) {
                           <button
                             onClick={handleAddPortfolioClicked}
                             type="button"
-                            className="mt-4 border-2 rounded-md px-4 py-1 text-xl cursor-pointer font-medium text-[#316c8c] w-auto hover:border-[#316c8c]"
+                            className="mt-4 border-[#00000200] rounded-md px-4 py-1 text-xl cursor-pointer font-medium text-[#316c8c] w-auto hover:border-white"
                           >
                             Add Portfolio
                           </button>
@@ -484,6 +668,9 @@ export default function MyPortfolios(props) {
                       <div>
                         <div className="pb-2">
                           {" "}
+                          {message && (
+                            <div className="text-slate-500">{message}</div>
+                          )}
                           {error && <div className="text-red-500">{error}</div>}
                         </div>
                         <button
@@ -496,32 +683,6 @@ export default function MyPortfolios(props) {
                     </form>
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-          <div className="pt-4 border-t">
-            {userData.account_pending ? (
-              <>
-                <h1
-                  type="button"
-                  className="text-xl font-medium text-white w-auto"
-                >
-                  Account is pending approval
-                </h1>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={
-                    currentTab === "Create"
-                      ? handleCancelClicked
-                      : handleAddPortfolioClicked
-                  }
-                  type="button"
-                  className="border-2 rounded-md px-4 py-1 hover:border-white border-[#316c8c] font-medium text-xl text-white"
-                >
-                  {currentTab === "Create" ? "Cancel" : "Add Portfolio"}
-                </button>
               </>
             )}
           </div>

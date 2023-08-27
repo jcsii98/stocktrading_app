@@ -9,6 +9,7 @@ export default function MyAccount(props) {
   const [cashIn, setCashIn] = useState(false);
   const [cashInAmt, setCashInAmt] = useState("");
   const [message, setMessage] = useState();
+  const [error, setError] = useState();
 
   const handleCashInAmtChange = (event) => {
     setCashInAmt(event.target.value);
@@ -34,6 +35,7 @@ export default function MyAccount(props) {
       }
 
       const data = await response.json();
+
       setUserData(data);
       setIsLoading(false);
       console.log(data);
@@ -54,6 +56,8 @@ export default function MyAccount(props) {
 
   const toggleCashIn = () => {
     setCashIn((prev) => !prev);
+    setError();
+    setMessage();
   };
 
   const handleSubmitCashIn = async (event) => {
@@ -79,10 +83,20 @@ export default function MyAccount(props) {
       });
       const data = await response.json();
 
-      console.log(data);
-      setMessage(data.message);
-      fetchUserDetails();
-      setCashInAmt("");
+      if (response.ok) {
+        if ((data.success = "success")) {
+          setMessage(data.message);
+          setError();
+          fetchUserDetails();
+          setCashInAmt("");
+        }
+      }
+
+      if (data.status == "error") {
+        console.log("data.status == error");
+        setMessage();
+        setError(data.message);
+      }
     } catch (error) {
       console.error("An error has occured", error);
     }
@@ -96,7 +110,7 @@ export default function MyAccount(props) {
           {userRole === "admin" ? "Admin" : "Profile"} Information
         </h2>
         {isLoading ? (
-          <DashboardLoading />
+          <DashboardLoading page="Your Account" />
         ) : (
           <>
             <div className="bg-white p-6 rounded shadow">
@@ -123,7 +137,7 @@ export default function MyAccount(props) {
                 </div>
               </div>
               <div className="mt-4">
-                <h4 className="text-lg font-semibold pb-2">Personal Details</h4>
+                <h4 className="text-lg font-semibold pb-2">Account Details</h4>
                 <div className="">
                   <div className="pb-4">
                     <p className="text-slate-500">Username:</p>
@@ -137,39 +151,58 @@ export default function MyAccount(props) {
                           Your Wallet
                         </h4>
 
-                        <p>Balance: {userData.wallet_balance}</p>
-                        <p>Pending Amount: {userData.pending_amount}</p>
+                        <p>Balance: ${userData.wallet_balance}</p>
+                        <p>Pending Amount: ${userData.pending_amount}</p>
                       </div>
-                      <div className="pt-2">
+                      <div className="pt-4">
                         {cashIn && (
                           <>
                             <div className="pb-2">
-                              <form onSubmit={handleSubmitCashIn}>
-                                <span className="pt-1 pl-2 h-[38px] w-auto text-xl fixed">
-                                  $
-                                </span>
-                                <input
-                                  value={cashInAmt}
-                                  onChange={handleCashInAmtChange}
-                                  placeholder=""
-                                  className="pl-6 border-none bg-slate-100 rounded-md"
-                                  type="text"
-                                ></input>
+                              <form className="" onSubmit={handleSubmitCashIn}>
+                                <div className="pb-2 flex">
+                                  <span className="pt-1 pl-2 h-[38px] w-auto text-xl fixed">
+                                    $
+                                  </span>
+                                  <input
+                                    value={cashInAmt}
+                                    onChange={handleCashInAmtChange}
+                                    placeholder=""
+                                    className="pl-6 border-none bg-slate-100 rounded-md"
+                                    type="text"
+                                  ></input>
+                                  <button
+                                    className="ml-4 border-2 rounded-md px-4 py-1 text-xlcursor-pointer font-medium w-auto hover:border-[#316c8c]"
+                                    type="submit"
+                                  >
+                                    Top Up
+                                  </button>
+                                </div>
                               </form>
                             </div>
                           </>
                         )}
-                        {message && (
-                          <div className="pt-2 text-slate-500">{message}</div>
-                        )}
-
-                        <button
-                          onClick={toggleCashIn}
-                          className="border-2 rounded-md px-4 py-1 text-xlcursor-pointer font-medium w-auto hover:border-[#316c8c]"
-                          type="button"
-                        >
-                          {cashIn ? "Cancel" : "Cash In"}
-                        </button>
+                        <div className="">
+                          {" "}
+                          <div className="">
+                            {message && (
+                              <div className="pb-2 text-slate-500">
+                                {message}
+                              </div>
+                            )}
+                            {error && (
+                              <div className="pb-2 text-red-500">{error}</div>
+                            )}
+                          </div>
+                          <div>
+                            <button
+                              onClick={toggleCashIn}
+                              className="border-2 rounded-md px-4 py-1 text-xlcursor-pointer font-medium w-auto hover:border-[#316c8c]"
+                              type="button"
+                            >
+                              {cashIn ? <>Cancel</> : <>Cash In</>}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}
