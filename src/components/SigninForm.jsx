@@ -56,13 +56,12 @@ export default function SigninForm(props) {
         console.log("Sign in successful");
       } else {
         setMessage();
-        setError(responseData.data.errors);
+        setError(responseData.errors);
 
         console.error("Sign in failed 1", responseData);
       }
     } catch (error) {
       setMessage();
-      setError(error);
       console.error("Sign in failed 2", error);
     }
   };
@@ -102,7 +101,15 @@ export default function SigninForm(props) {
           <div className="pb-2">
             {" "}
             {message && <div className="text-slate-500">{message}</div>}
-            {error && <div className="text-red-500">{error}</div>}
+            <div>
+              {error && error.length > 0 && (
+                <div className="text-red-500">
+                  {error.map((errorMessage, index) => (
+                    <div key={index}>{errorMessage}</div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <button
             type="submit"
