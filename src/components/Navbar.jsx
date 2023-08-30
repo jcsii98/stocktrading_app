@@ -18,10 +18,10 @@ export default function Navbar(props) {
 
   return (
     <>
-      <div className="border-b mb-4">
+      <div className="border-b mb-4 select-none">
         <div className="max-w-[1240px] flex justify-between items-center h-24 mx-auto text-white">
           <h1 className={"w-full text-3xl font-bold"}>
-            {isLoggedIn ? <>Hi, {userData.full_name}</> : <>P2P Crypto</>}
+            {isLoggedIn ? <>{userData.full_name}</> : <>Sample P2P Crypto</>}
           </h1>
           <ul className="hidden md:flex space-x-8">
             {isLoggedIn && (
@@ -41,7 +41,7 @@ export default function Navbar(props) {
                     style={{ whiteSpace: "nowrap" }}
                     onClick={() => setCurrentPage("Stocks")}
                   >
-                    Coins
+                    Stocks
                   </a>
                 </li>
                 <li className="">

@@ -6,7 +6,7 @@ export default function DashboardLoading(props) {
     <>
       <div className="bg-white p-6 rounded shadow select-none">
         {" "}
-        <div className="py-6">
+        <div className="py-6 text-slate-500">
           <div className="text-center text-5xl font-bold">Loading {page}</div>
           <div className="flex flex-col justify-center items-center">
             <VscLoading size={50} className="my-7 loading-icon" />

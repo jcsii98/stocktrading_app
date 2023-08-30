@@ -54,7 +54,7 @@ export default function Stocks() {
         <div className="flex justify-between">
           <div className="self-center">
             <h1 className="text-3xl font-bold text-white flex items-center">
-              Supported Coins
+              Supported Stocks
             </h1>
           </div>
           <div className="self-center"></div>
@@ -63,29 +63,31 @@ export default function Stocks() {
 
       {isLoading ? (
         <>
-          <DashboardLoading page="Coins" />
+          <DashboardLoading page="Stocks" />
         </>
       ) : (
         <>
           <div className="h-[450px] p-6 bg-white rounded">
             <div className="h-[400px] overflow-y-auto">
               <table className="w-full">
-                <thead className="text-slate-500 font-medium">
+                <thead className="bg-slate-200 text-slate-500 font-medium">
                   <tr className="my-4 text-xl table-fixed w-full table">
-                    <th className="text-start">Name</th>
-                    <th className="text-start">Symbol</th>
-                    <th className="pr-4 text-end">USD</th>
+                    <th className="pl-4 text-start">Name</th>
+                    <th className="pl-2 text-start">Symbol</th>
+                    <th className="pr-4 text-end">PHP</th>
                   </tr>
                 </thead>
                 <tbody className="block h-[330px] overflow-auto">
                   {stocksData.map((stock) => (
                     <tr
-                      className="table-fixed w-full table border-y hover:bg-slate-200 font-normal"
+                      className="table-fixed w-full table border-y text-slate-500 hover:text-white hover:bg-slate-500 bg-slate-100 font-normal"
                       key={stock.id}
                     >
-                      <td className="text-start">{stock.name}</td>
-                      <td className="border-x text-start">{stock.symbol}</td>
-                      <td className="text-end">{stock.usd}</td>
+                      <td className="pl-4 text-start">{stock.name}</td>
+                      <td className="pl-4 border-x text-start">
+                        {stock.symbol}
+                      </td>
+                      <td className="pr-2 text-end">{stock.usd}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -311,10 +311,10 @@ export default function MyPortfolios(props) {
                     <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
                       <tr className="text-xl table-fixed w-full table">
                         <th className="pl-2 text-start">ID#</th>
-                        <th className="text-start">Coin Symbol</th>
+                        <th className="text-start">Symbol</th>
                         <th className="text-end">Quantity</th>
-                        <th className="text-end">Coin Price ($)</th>
-                        <th className="text-end pr-2">Total Value ($)</th>
+                        <th className="text-end">Stock Price (PHP)</th>
+                        <th className="text-end pr-2">Total Value (PHP)</th>
                       </tr>
                     </thead>
                     <tbody className="block max-h-[300px] overflow-auto">
@@ -323,7 +323,7 @@ export default function MyPortfolios(props) {
                           return (
                             <tr
                               key={portfolio.id}
-                              className="table-fixed table w-full h-[2rem] border-y hover:text-white hover:bg-slate-500 bg-slate-100"
+                              className="table-fixed table w-full h-[2rem] border-y hover:text-white text-slate-500 hover:bg-slate-500 bg-slate-100"
                             >
                               <td className="pl-2 font-thin text-start">
                                 {portfolio.id}
@@ -417,8 +417,12 @@ export default function MyPortfolios(props) {
                                     Transaction ID
                                   </th>
                                   <th className="text-start">Quantity</th>
-                                  <th className="text-end">Coin Price ($)</th>
-                                  <th className="text-end">Total Value</th>
+                                  <th className="text-end">
+                                    Stock Price (PHP)
+                                  </th>
+                                  <th className="text-end">
+                                    Total Value (PHP)
+                                  </th>
                                   <th className="text-end">Status</th>
                                   <th className="text-center">Actions</th>
                                 </tr>
@@ -489,8 +493,12 @@ export default function MyPortfolios(props) {
                                     Transaction ID
                                   </th>
                                   <th className="text-start">Quantity</th>
-                                  <th className="text-end">Coin Price ($)</th>
-                                  <th className="text-end">Total Value</th>
+                                  <th className="text-end">
+                                    Stock Price (PHP)
+                                  </th>
+                                  <th className="text-end">
+                                    Total Value (PHP)
+                                  </th>
                                   <th className="text-center">Status</th>
                                 </tr>
                               </thead>
@@ -546,10 +554,10 @@ export default function MyPortfolios(props) {
                             <thead className="select-none text-slate-500 font-medium bg-slate-200 h-[2rem]">
                               <tr className="text-xl table-fixed w-full table">
                                 <th className="pl-2 text-start">ID#</th>
-                                <th className="text-start">Coin Symbol</th>
+                                <th className="text-start">Stock Symbol</th>
                                 <th className="text-end">Quantity</th>
-                                <th className="text-end">Coin Price ($)</th>
-                                <th className="text-end">Total Value ($)</th>
+                                <th className="text-end">Stock Price (PHP)</th>
+                                <th className="text-end">Total Value (PHP)</th>
                                 <th className="text-center">Actions</th>
                               </tr>
                             </thead>
@@ -557,7 +565,7 @@ export default function MyPortfolios(props) {
                               {myPortfolios.map((portfolio) => (
                                 <tr
                                   key={portfolio.id}
-                                  className="table-fixed table w-full h-[2rem] border-y hover:text-white hover:bg-slate-500 bg-slate-100"
+                                  className="table-fixed table w-full h-[2rem] border-y hover:text-white text-slate-500 hover:bg-slate-500 bg-slate-100"
                                 >
                                   <td className="pl-2 font-thin text-start">
                                     {portfolio.id}
@@ -660,7 +668,7 @@ export default function MyPortfolios(props) {
                       <input
                         className="rounded-md border-none bg-slate-100"
                         type="text"
-                        placeholder="Coin Symbol"
+                        placeholder="Stock Symbol"
                         value={symbol}
                         onChange={(e) => setSymbol(e.target.value)}
                       ></input>

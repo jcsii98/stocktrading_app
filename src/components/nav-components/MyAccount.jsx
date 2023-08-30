@@ -1,6 +1,7 @@
 import UserPng from "../../assets/user.png";
 import React, { useState, useEffect } from "react";
 import DashboardLoading from "./DashboardLoading";
+import { BiHide, BiShow } from "react-icons/bi";
 
 export default function MyAccount(props) {
   const { setUserData, userData, userRole } = props;
@@ -10,6 +11,7 @@ export default function MyAccount(props) {
   const [cashInAmt, setCashInAmt] = useState("");
   const [message, setMessage] = useState();
   const [error, setError] = useState();
+  const [walletVisible, setWalletVisible] = useState(false);
 
   const handleCashInAmtChange = (event) => {
     setCashInAmt(event.target.value);
@@ -62,7 +64,9 @@ export default function MyAccount(props) {
     setError();
     setMessage();
   };
-
+  const toggleWalletVisible = () => {
+    setWalletVisible((prev) => !prev);
+  };
   const handleSubmitCashIn = async (event) => {
     event.preventDefault();
     setMessage(`Topping up ${cashInAmt} for ${userData.full_name}`);
@@ -111,7 +115,7 @@ export default function MyAccount(props) {
   return (
     <>
       {" "}
-      <div className="">
+      <div className="select-none">
         <h2 className="pb-4 text-3xl font-bold text-white">
           {userRole === "admin" ? "Admin" : "Profile"} Information
         </h2>
@@ -129,7 +133,7 @@ export default function MyAccount(props) {
                     alt="Profile"
                   />
                 </div>
-                <div>
+                {/* <div>
                   <div className="flex">
                     <h3 className="text-lg font-semibold">
                       {userData.full_name}
@@ -140,25 +144,81 @@ export default function MyAccount(props) {
                   </div>
 
                   <p className="text-slate-500">{userData.email}</p>
-                </div>
+                </div> */}
               </div>
               <div className="mt-4">
-                <h4 className="text-lg font-semibold pb-2">Account Details</h4>
+                <div className="flex">
+                  <h4 className="text-lg font-semibold pb-2">
+                    Account Details
+                  </h4>
+                  <h4 className="pl-2 text-lg font-medium pb-2 text-slate-500">
+                    {userData.account_pending ? "Pending" : "Approved"}
+                  </h4>
+                </div>
                 <div className="">
-                  <div className="pb-4">
-                    <p className="text-slate-500">Username:</p>
-                    <p>{userData.user_name}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="pb-2">
+                      <p className="text-slate-500">Username:</p>
+                      <p>{userData.user_name}</p>
+                    </div>
+                    <div className="pb-2">
+                      <p className="text-slate-500">Email:</p>
+                      <p>{userData.email}</p>
+                    </div>
+                    <div className="pb-2">
+                      <p className="text-slate-500">Full Name:</p>
+                      <p>{userData.full_name}</p>
+                    </div>
+                    <div className="pb-2">
+                      <p className="text-slate-500">ID:</p>
+                      <p>#100{userData.id}</p>
+                    </div>
                   </div>
 
                   {userRole === "user" && (
                     <>
-                      <div className="border-t pt-4">
-                        <h4 className="text-lg font-semibold pb-2">
-                          Your Wallet
-                        </h4>
+                      <div className="border-t pt-2 pb-2">
+                        <div className="flex items-center">
+                          {walletVisible ? (
+                            <>
+                              <h4 className="text-lg font-semibold">
+                                Your Wallet
+                              </h4>
+                            </>
+                          ) : (
+                            <>
+                              <h4 className="text-lg font-semibold opacity-70">
+                                Your Wallet
+                              </h4>
+                            </>
+                          )}
 
-                        <p>Balance: ${userData.wallet_balance}</p>
-                        <p>Pending Amount: ${userData.pending_amount}</p>
+                          <div className="pl-4 flex flex-col justify-center items-center">
+                            {walletVisible ? (
+                              <>
+                                <BiShow
+                                  className="opacity-70 cursor-pointer"
+                                  onClick={toggleWalletVisible}
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <BiHide
+                                  className="opacity-70 cursor-pointer"
+                                  onClick={toggleWalletVisible}
+                                />
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        {walletVisible ? (
+                          <>
+                            <p>Balance: ${userData.wallet_balance}</p>
+                            <p>Pending Amount: ${userData.pending_amount}</p>
+                          </>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                       <div className="pt-4">
                         {cashIn && (
